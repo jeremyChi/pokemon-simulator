@@ -106,23 +106,38 @@
                                 <label @click="search(phase.name)">
                                     <input class="hidden" disabled v-if="position == 'attack'" type="checkbox" :value="phase.name" v-model="phasesWeCanDefeat">
                                     <input class="hidden" disabled v-else type="checkbox" :value="phase.name" v-model="phasesWeFeared">
-                                    <el-popover trigger="hover" width="300">
+                                    <el-popover trigger="hover" width="500">
                                         <template #reference>
                                             <span class="name" :style="`background-color: ${phase.theme};`">{{phase.name}}</span>
                                         </template>
                                         <div class="phase-info-panel">
-                                            <p class="title">擅于击败:</p>
-                                            <ul class="data-list">
-                                                <li class="data-item phase" @click="search(el)" v-for="el in phase.beGoodAt">
-                                                    <span class="name" :style="`background-color: ${phases.find(e=>e.name == el).theme};`">{{el}}</span>
-                                                </li>
-                                            </ul>
-                                            <p class="title">害怕碰到:</p>
-                                            <ul class="data-list">
-                                                <li class="data-item phase" @click="search(el)" v-for="el in phase.beAfraidOf">
-                                                    <span class="name" :style="`background-color: ${phases.find(e=>e.name == el).theme};`">{{el}}</span>
-                                                </li>
-                                            </ul>
+                                            <div class="card-group">
+                                                <el-card class="box-card">
+                                                    <template #header>
+                                                        <div class="card-header">
+                                                            <span>擅于击败</span>
+                                                        </div>
+                                                    </template>
+                                                    <ul class="data-list">
+                                                        <li class="data-item phase" @click="search(el)" v-for="el in phase.beGoodAt">
+                                                            <span class="name" :style="`background-color: ${phases.find(e=>e.name == el).theme};`">{{el}}</span>
+                                                        </li>
+                                                    </ul>
+                                                </el-card>
+
+                                                <el-card class="box-card">
+                                                    <template #header>
+                                                        <div class="card-header">
+                                                            <span>害怕碰到</span>
+                                                        </div>
+                                                    </template>
+                                                    <ul class="data-list">
+                                                        <li class="data-item phase" @click="search(el)" v-for="el in phase.beAfraidOf">
+                                                            <span class="name" :style="`background-color: ${phases.find(e=>e.name == el).theme};`">{{el}}</span>
+                                                        </li>
+                                                    </ul>
+                                                </el-card>
+                                            </div>
                                         </div>
                                     </el-popover>
                                 </label>

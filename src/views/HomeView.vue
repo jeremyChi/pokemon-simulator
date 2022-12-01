@@ -8,27 +8,25 @@
                     <el-button type="primary" class="btn-import" size="small" @click="importPokemons()">导入队伍 </el-button>
                     <input @change="onFileChange" ref="file" id="file" type="file" />
                 </div>
-                <el-button type="primary" size="small" @click="savePokemons()">保存至缓存</el-button>
+                <el-button type="primary" size="small" @click="savePokemons()">保存</el-button>
                 <el-button type="danger" size="small" @click="clearPokemons()">清空</el-button>
                 <el-input style="margin-left: auto;" v-model="keyword" placeholder="键入并按回车搜索" @change="search(keyword)" />
             </h1>
             <ul class="pokemons">
                 <li class="pokemon" :progress="pokemon.slots.filter(el=>!!el).length" v-for="(pokemon,i) in pokemons">
-                    <div class="avatar">
+                    <div class="avatar" @click="setAvatar(pokemon)">
+                        <el-image style="width: 100%; height: 100%" v-if="pokemon.avatar" :src="pokemon.avatar" :fit="fit" />
                     </div>
                     <el-input class="pokemon-name" type="text" v-model="pokemon.name"></el-input>
                     <ul class="slots">
                         <li class="slot" v-for="(slot,index) in pokemon.slots">
                             <el-select class="txt-select" :theme="getTheme(slot)" placeholder="请选择" v-model="pokemons[i].slots[index]" clearable value-key="name">
-
                                 <el-option-group class="colorfull" label="战斗技能">
                                     <el-option :style="`background-color: ${el.theme};`" :value="el" :label="el.name" v-for="el in phases"></el-option>
                                 </el-option-group>
-
                                 <el-option-group label="工具技能">
                                     <el-option :disabled="!!(pokemons[i].slots.find(e=>e&&e.name == el.name))" :value="el" :label="el.name" v-for="el in toolSkills"></el-option>
                                 </el-option-group>
-
                             </el-select>
                         </li>
                     </ul>
@@ -55,7 +53,6 @@
                             可用来攻击
                         </label>
                     </el-card>
-
                     <el-card class="box-card">
                         <template #header>
                             <div class="card-header">
@@ -73,10 +70,8 @@
                     </el-card>
                 </div>
             </header>
-
             <main class="result-panel">
                 <h1 class="title">预览</h1>
-
                 <div class="card-group">
                     <el-card class="box-card">
                         <template #header>
@@ -93,7 +88,6 @@
                             </li>
                         </ul>
                     </el-card>
-
                     <el-card class="box-card">
                         <template #header>
                             <div class="card-header">
@@ -124,7 +118,6 @@
                                                         </li>
                                                     </ul>
                                                 </el-card>
-
                                                 <el-card class="box-card">
                                                     <template #header>
                                                         <div class="card-header">
@@ -157,9 +150,32 @@
         </el-dialog>
     </div>
 </template>
-
 <script>
-import Cookies from 'js-cookie'
+let emptyPokemons = [{
+    name: '',
+    avatar: '',
+    slots: [null, null, null, null, ],
+}, {
+    name: '',
+    avatar: '',
+    slots: [null, null, null, null, ],
+}, {
+    name: '',
+    avatar: '',
+    slots: [null, null, null, null, ],
+}, {
+    name: '',
+    avatar: '',
+    slots: [null, null, null, null, ],
+}, {
+    name: '',
+    avatar: '',
+    slots: [null, null, null, null, ],
+}, {
+    name: '',
+    avatar: '',
+    slots: [null, null, null, null, ],
+}]
 export default {
     computed: {
         pickedSkills: function() {
@@ -179,8 +195,7 @@ export default {
             } = this;
             if (toolSkillUsage == 'tool-only') {
                 res = this.pickedPhaseSkills.map(el => el.name)
-            }
-            else {
+            } else {
                 res = this.pickedSkills.map(el => {
                     return el.type == 'tool' ? el.phase : el.name
                 })
@@ -206,25 +221,7 @@ export default {
             dialogVisible: false,
             toolSkillUsage: 'tool-only',
             position: 'attack',
-            pokemons: [{
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }],
+            pokemons: emptyPokemons,
             toolSkills: [{
                     name: '旋涡',
                     type: 'tool',
@@ -371,28 +368,10 @@ export default {
             this.dialogVisible = true;
         },
         savePokemons() {
-            Cookies.set('pokemons', JSON.stringify(this.pokemons))
+            localStorage.setItem('pokemons', JSON.stringify(this.pokemons));
         },
         clearPokemons() {
-            this.pokemons = [{
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }, {
-                name: '',
-                slots: [null, null, null, null, ],
-            }]
+            this.pokemons = emptyPokemons;
         },
         downFile(content, filename) {
             var ele = document.createElement('a'); // 创建下载链接
@@ -432,18 +411,27 @@ export default {
                 if (slot.type == 'tool') {
                     res = toolSkillUsage == 'tool-and-fight' ? phases.find(phase => phase.name == slot.phase).theme : null;
 
-                }
-                else {
+                } else {
                     res = slot.theme
                 }
             }
             return res;
         },
+        setAvatar(pokemon) {
+            this.$messageBox.prompt('', '设置头像', {
+                confirmButtonText: '设置',
+                cancelButtonText: '取消',
+            }).then(({value}) => {
+                pokemon.avatar = value
+            }).catch(() => {
+
+            })
+        },
     },
 
     mounted() {
-        if (Cookies.get('pokemons')) {
-            this.pokemons = JSON.parse(Cookies.get('pokemons'))
+        if (localStorage.getItem('pokemons')) {
+            this.pokemons = JSON.parse(localStorage.getItem('pokemons'))
         }
     },
 }
@@ -595,6 +583,7 @@ input:not(:checked)+* {
     align-items: center;
     justify-content: center;
     border: 5px solid;
+    overflow: hidden;
 }
 
 .data-list {
@@ -748,7 +737,8 @@ input:not(:checked)+* {
 [theme='#EB8FE6']>>>.el-input__wrapper {
     background-color: #EB8FE6;
 }
-.emoji{
+
+.emoji {
     font-size: 3em;
 }
 </style>

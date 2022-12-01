@@ -3,13 +3,14 @@
         <aside>
             <h1 class="title">
                 <span>精灵</span>
+                <el-button size="small" @click="savepokemons()">保存至缓存</el-button>
                 <el-input v-model="keyword" placeholder="输入关键字并按回车搜索" @change="search(keyword)" />
             </h1>
             <ul class="pokemons">
                 <li class="pokemon" :progress="pokemon.slots.filter(el=>!!el).length" v-for="(pokemon,i) in pokemons">
                     <div class="avatar">
                         <span class="pokemon-name">
-                            <input type="text">
+                            <input type="text" v-model="pokemon.name">
                         </span>
                     </div>
                     <ul class="slots">
@@ -115,6 +116,7 @@
 </template>
 
 <script>
+    import Cookies from 'js-cookie'
 export default {
     computed: {
         pickedSkills: function() {
@@ -162,16 +164,22 @@ export default {
             toolSkillUsage: 'tool-only',
             position: 'attack',
             pokemons: [{
+                name : '',
                 slots: [null, null, null, null, ],
             }, {
+                name : '',
                 slots: [null, null, null, null, ],
             }, {
+                name : '',
                 slots: [null, null, null, null, ],
             }, {
+                name : '',
                 slots: [null, null, null, null, ],
             }, {
+                name : '',
                 slots: [null, null, null, null, ],
             }, {
+                name : '',
                 slots: [null, null, null, null, ],
             }],
             toolSkills: [{
@@ -319,10 +327,15 @@ export default {
             this.keyword = input;
             this.dialogVisible = true;
         },
+        savepokemons(){
+            Cookies.set('pokemons',JSON.stringify(this.pokemons))
+        },
     },
 
     mounted() {
-
+        if(Cookies.get('pokemons')){
+            this.pokemons = JSON.parse(Cookies.get('pokemons'))
+        }
     },
 }
 </script>

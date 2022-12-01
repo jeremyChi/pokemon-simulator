@@ -97,8 +97,8 @@
                     <el-card class="box-card">
                         <template #header>
                             <div class="card-header">
-                                <p class="title" v-if="position == 'attack'">擅于击败(剩余:{{(phases.length)-(phasesWeCanDefeat.length)}}):</p>
-                                <p class="title" v-else>害怕碰到(剩余:{{phasesWeFeared.length}}):</p>
+                                <p class="title" v-if="position == 'attack'"><span class="emoji">😍</span>(剩余:{{(phases.length)-(phasesWeCanDefeat.length)}}):</p>
+                                <p class="title" v-else><span class="emoji">😱</span>(剩余:{{phasesWeFeared.length}}):</p>
                             </div>
                         </template>
                         <ul class="data-list">
@@ -115,7 +115,7 @@
                                                 <el-card class="box-card">
                                                     <template #header>
                                                         <div class="card-header">
-                                                            <span>擅于击败</span>
+                                                            <span class="emoji">😍</span>
                                                         </div>
                                                     </template>
                                                     <ul class="data-list">
@@ -128,7 +128,7 @@
                                                 <el-card class="box-card">
                                                     <template #header>
                                                         <div class="card-header">
-                                                            <span>害怕碰到</span>
+                                                            <span class="emoji">😱</span>
                                                         </div>
                                                     </template>
                                                     <ul class="data-list">
@@ -747,5 +747,8 @@ input:not(:checked)+* {
 
 [theme='#EB8FE6']>>>.el-input__wrapper {
     background-color: #EB8FE6;
+}
+.emoji{
+    font-size: 2em;
 }
 </style>

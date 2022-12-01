@@ -749,6 +749,6 @@ input:not(:checked)+* {
     background-color: #EB8FE6;
 }
 .emoji{
-    font-size: 2em;
+    font-size: 3em;
 }
 </style>

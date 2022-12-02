@@ -12,10 +12,11 @@
                 <el-button type="danger" size="small" @click="clearPokemons()">清空</el-button>
                 <el-input style="margin-left: auto;" v-model="keyword" placeholder="键入并按回车搜索" @change="search(keyword)" />
             </h1>
+           
             <ul class="pokemons">
-                <li class="pokemon" :progress="pokemon.slots.filter(el=>!!el).length" v-for="(pokemon,i) in pokemons">
-                    <div class="avatar" @click="setAvatar(pokemon)">
-                        <el-image style="width: 100%; height: 100%" v-if="pokemon.avatar" :src="pokemon.avatar" :fit="fit" />
+                <li class="pokemon" v-for="(pokemon,i) in pokemons">
+                    <div class="avatar" :mode="mode" :slotsfullfilled="pokemon.slots.filter(el=>el?.name).length == pokemon.slots.length" :skillexist="!!pokemon.slots.map(el=>el?.name).includes(activeSkill?.name)" :progress="pokemon.slots.filter(el=>!!el).length" @click="onAvatarClick(pokemon)">
+                        <el-image style="width: 100%; height: 100%" v-if="pokemon.avatar" :src="pokemon.avatar" />
                     </div>
                     <el-input class="pokemon-name" type="text" v-model="pokemon.name"></el-input>
                     <ul class="slots">
@@ -76,14 +77,16 @@
                     <el-card class="box-card">
                         <template #header>
                             <div class="card-header">
-                                <span>已选择的工具技能(剩余:{{(toolSkills.length)-(pickedToolSkills.length)}})</span>
+                                <span>已选择的工具技能</span><span v-if="(toolSkills.length) == (pickedToolSkills.length)">👍</span>
                             </div>
                         </template>
+                        <h2 class="skill-assign-tip" v-if="mode == 'skill-assign'">点击左侧精灵球以分配 <el-button type="danger" size="small" @click="cancelSkillAssign()">取消技能分配</el-button>
+                        </h2>
                         <ul class="data-list">
-                            <li class="data-item" v-for="el in toolSkills">
+                            <li class="data-item" :class="{'phase' : toolSkillUsage == 'tool-and-fight'}" v-for="el in toolSkills" @click="handleAssignToolSkill(el)">
                                 <label>
                                     <input class="hidden" disabled type="checkbox" :value="el" v-model="pickedToolSkills">
-                                    <span class="name" style="color: #000;">{{el.name}}</span>
+                                    <span class="name" :theme="getTheme(el)" style="color: #000;">{{el.name}}</span>
                                 </label>
                             </li>
                         </ul>
@@ -91,8 +94,8 @@
                     <el-card class="box-card">
                         <template #header>
                             <div class="card-header">
-                                <p class="title" v-if="position == 'attack'"><span class="emoji">😍</span>(剩余:{{(phases.length)-(phasesWeCanDefeat.length)}}):</p>
-                                <p class="title" v-else><span class="emoji">😱</span>(剩余:{{phasesWeFeared.length}}):</p>
+                                <p class="title" v-if="position == 'attack'"><span class="emoji">😍</span><span v-if="phases.length == phasesWeCanDefeat.length">👍</span></p>
+                                <p class="title" v-else><span class="emoji">😱</span><span v-if="phasesWeFeared.length == 0">👍</span></p>
                             </div>
                         </template>
                         <ul class="data-list">
@@ -102,7 +105,7 @@
                                     <input class="hidden" disabled v-else type="checkbox" :value="phase.name" v-model="phasesWeFeared">
                                     <el-popover trigger="hover" width="500">
                                         <template #reference>
-                                            <span class="name" :style="`background-color: ${phase.theme};`">{{phase.name}}</span>
+                                            <span class="name" :theme="phase.theme">{{phase.name}}</span>
                                         </template>
                                         <div class="phase-info-panel">
                                             <div class="card-group">
@@ -114,7 +117,7 @@
                                                     </template>
                                                     <ul class="data-list">
                                                         <li class="data-item phase" @click="search(el)" v-for="el in phase.beGoodAt">
-                                                            <span class="name" :style="`background-color: ${phases.find(e=>e.name == el).theme};`">{{el}}</span>
+                                                            <span class="name" :theme="phases.find(e=>e.name == el).theme || null">{{el}}</span>
                                                         </li>
                                                     </ul>
                                                 </el-card>
@@ -126,7 +129,7 @@
                                                     </template>
                                                     <ul class="data-list">
                                                         <li class="data-item phase" @click="search(el)" v-for="el in phase.beAfraidOf">
-                                                            <span class="name" :style="`background-color: ${phases.find(e=>e.name == el).theme};`">{{el}}</span>
+                                                            <span class="name" :theme="phases.find(e=>e.name == el).theme || null">{{el}}</span>
                                                         </li>
                                                     </ul>
                                                 </el-card>
@@ -218,6 +221,8 @@ export default {
     },
     data() {
         return {
+            mode: '',
+            activeSkill: null,
             keyword: '',
             dialogVisible: false,
             toolSkillUsage: 'tool-only',
@@ -427,6 +432,14 @@ export default {
             }
             return res;
         },
+        onAvatarClick(pokemon) {
+            if (this.mode == 'skill-assign') {
+                this.assignToolSkill(pokemon)
+            }
+            else {
+                this.setAvatar(pokemon)
+            }
+        },
         setAvatar(pokemon) {
             this.$messageBox.prompt('', '设置头像', {
                 confirmButtonText: '设置',
@@ -440,6 +453,25 @@ export default {
 
             })
         },
+        handleAssignToolSkill(skill) {
+            this.mode = 'skill-assign';
+            this.activeSkill = skill;
+            this.$message.info('点击精灵球以分配')
+        },
+        assignToolSkill(pokemon) {
+            let emptySlotIndex = pokemon.slots.findIndex(el => !el || !el.name);
+            if (emptySlotIndex < 0) {
+                this.$message.warning('该精灵技能槽已满')
+            }
+            else {
+                pokemon.slots[emptySlotIndex] = this.activeSkill;
+                this.cancelSkillAssign()
+            }
+        },
+        cancelSkillAssign() {
+            this.mode = '';
+            this.activeSkill = null;
+        },
     },
 
     mounted() {
@@ -449,7 +481,7 @@ export default {
     },
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 * {
     margin: 0;
     padding: 0;
@@ -465,28 +497,29 @@ ul {
     padding: 15px;
 }
 
-aside .title {
-    display: flex;
-    align-items: center;
+.hidden {
+    display: none;
 }
 
-aside .title>* {
-    margin-left: 10px;
-}
-
-aside .title span {
-    flex-shrink: 0;
-}
-
-aside .title .el-input {
-    width: 11.2em;
-}
-
-aside{
+aside {
     margin-right: 15px;
+
+    .title {
+        display: flex;
+        align-items: center;
+
+        &>* {
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .el-input {
+            width: 11.2em;
+        }
+    }
 }
 
-section + section{
+section+section {
     margin-top: 15px;
 }
 
@@ -505,15 +538,13 @@ label {
     cursor: pointer;
 }
 
-.hidden {
-    display: none;
-}
-
-
 input:checked+* {
     opacity: 1;
     font-weight: bold;
-    border: 3px solid #000 !important;
+}
+
+input:not(:checked)+* {
+    opacity: .3 !important;
 }
 
 input:not(:checked)+* {
@@ -524,11 +555,12 @@ input:not(:checked)+* {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 20px;
+
+    .pokemon {
+        text-align: center;
+    }
 }
 
-.pokemon {
-    text-align: center;
-}
 
 .pokemon-name {
     width: 10em;
@@ -537,52 +569,17 @@ input:not(:checked)+* {
     padding: 5px;
     margin-bottom: 10px;
 
-}
+    ::v-deep {
+        .el-input__wrapper {
+            padding: 0 5px;
+        }
 
-.pokemon-name>>>.el-input__wrapper {
-    padding: 0 5px;
-}
-
-.pokemon-name>>>.el-input__inner {
-    text-align: center;
-    font-weight: bold;
-    color: #000;
-}
-
-.pokemon .avatar:before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    left: 0;
-    bottom: 0;
-    background-image: url('@/assets/pokemon-ball.png');
-    background-size: 100% auto;
-    background-position: bottom;
-}
-
-.pokemon[progress='1'] .avatar:before {
-    height: 25%;
-}
-
-.pokemon[progress='2'] .avatar:before {
-    height: 50%;
-}
-
-.pokemon[progress='3'] .avatar:before {
-    height: 75%;
-}
-
-.pokemon[progress='4'] .avatar:before {
-    height: 100%;
-}
-
-.pokemon {}
-
-.pokemon .slots {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px 10px;
-    width: 260px;
+        .el-input__inner {
+            text-align: center;
+            font-weight: bold;
+            color: #000;
+        }
+    }
 }
 
 .pokemons .avatar {
@@ -595,32 +592,80 @@ input:not(:checked)+* {
     justify-content: center;
     border: 5px solid;
     overflow: hidden;
+    cursor: pointer;
+
+    &[mode="skill-assign"] {
+        &[skillexist="false"][slotsfullfilled="false"] {
+            animation: blink 1s infinite;
+        }
+
+        &[skillexist="true"],
+        &[slotsfullfilled="true"] {
+            pointer-events: none;
+        }
+    }
+
+    &:before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+        background-image: url('@/assets/pokemon-ball.png');
+        background-size: 100% auto;
+        background-position: bottom;
+    }
+
+    &[progress='1']:before {
+        height: 25%;
+    }
+
+    &[progress='2']:before {
+        height: 50%;
+    }
+
+    &[progress='3']:before {
+        height: 75%;
+    }
+
+    &[progress='4']:before {
+        height: 100%;
+    }
 }
+
+.pokemon .slots {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px 10px;
+    width: 260px;
+}
+
 
 .data-list {
     display: flex;
     flex-wrap: wrap;
 }
 
-.data-item .name {
-    padding: 0 20px;
-    border-radius: 10px;
-    font-size: 18px;
-    white-space: nowrap;
-    margin: 5px;
-    border: 1px solid;
-    box-sizing: border-box;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    cursor: pointer;
-    box-sizing: border-box;
-}
+.data-item {
+    .name {
+        padding: 0 20px;
+        font-size: 18px;
+        white-space: nowrap;
+        margin: 5px 10px;
+        border: 1px solid;
+        box-sizing: border-box;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
 
-.data-item.phase .name {
-    border: none;
+    &.phase .name {
+        border: none;
+    }
 }
 
 .card-group {
@@ -633,12 +678,6 @@ input:not(:checked)+* {
     margin-left: 20px;
 }
 
-.option-item,
-.result-item {
-    margin: 20px 0;
-}
-
-.txt-select {}
 
 .detail-iframe {
     width: 100%;
@@ -648,112 +687,214 @@ input:not(:checked)+* {
 .import-container {
     display: flex;
     position: relative;
-}
 
-.import-container input {
-    position: absolute;
-    width: 100%;
-    left: 0;
-    height: 100%;
-    top: 0;
-    visibility: hidden;
+    input {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        height: 100%;
+        top: 0;
+        visibility: hidden;
+    }
 }
 
 .el-select-group .el-select-dropdown__item {
     margin: 5px;
-
 }
 
 .colorfull .el-select-dropdown__item {
     color: #fff;
 }
 
->>>.el-input__inner {
+::v-deep .el-input__inner {
     font-size: 16px;
 }
 
-[theme]>>>.el-input__inner {
-    color: #fff;
+[theme] {
+    color: #fff !important;
+
+    ::v-deep {
+        .el-input__inner {
+            color: #fff;
+        }
+
+        .el-input__wrapper {
+            box-shadow: none;
+        }
+    }
 }
 
-[theme]>>>.el-input__wrapper {
-    box-shadow: none;
-    outline: none;
-}
-
-[theme='#9099a1']>>>.el-input__wrapper {
+[theme='#9099a1'] {
     background-color: #9099a1;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #9099a1;
+    }
 }
 
-[theme='#cc406a']>>>.el-input__wrapper {
+[theme='#cc406a'] {
     background-color: #cc406a;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #cc406a;
+    }
 }
 
-[theme='#8ea8de']>>>.el-input__wrapper {
+[theme='#8ea8de'] {
     background-color: #8ea8de;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #8ea8de;
+    }
 }
 
-[theme='#A96AC8']>>>.el-input__wrapper {
+[theme='#A96AC8'] {
     background-color: #A96AC8;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #A96AC8;
+    }
 }
 
-[theme='#D87844']>>>.el-input__wrapper {
+[theme='#D87844'] {
     background-color: #D87844;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #D87844;
+    }
 }
 
-[theme='#C5B68B']>>>.el-input__wrapper {
+[theme='#C5B68B'] {
     background-color: #C5B68B;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #C5B68B;
+    }
 }
 
-[theme='#91C02E']>>>.el-input__wrapper {
+[theme='#91C02E'] {
     background-color: #91C02E;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #91C02E;
+    }
 }
 
-[theme='#5368AC']>>>.el-input__wrapper {
+[theme='#5368AC'] {
     background-color: #5368AC;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #5368AC;
+    }
 }
 
-[theme='#598A9D']>>>.el-input__wrapper {
+[theme='#598A9D'] {
     background-color: #598A9D;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #598A9D;
+    }
 }
 
-[theme='#FD9C54']>>>.el-input__wrapper {
+[theme='#FD9C54'] {
     background-color: #FD9C54;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #FD9C54;
+    }
 }
 
-[theme='#4F8FD5']>>>.el-input__wrapper {
+[theme='#4F8FD5'] {
     background-color: #4F8FD5;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #4F8FD5;
+    }
 }
 
-[theme='#61BB5A']>>>.el-input__wrapper {
+[theme='#61BB5A'] {
     background-color: #61BB5A;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #61BB5A;
+    }
 }
 
-[theme='#F3D23B']>>>.el-input__wrapper {
+[theme='#F3D23B'] {
     background-color: #F3D23B;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #F3D23B;
+    }
 }
 
-[theme='#F97178']>>>.el-input__wrapper {
+[theme='#F97178'] {
     background-color: #F97178;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #F97178;
+    }
 }
 
-[theme='#76CFC0']>>>.el-input__wrapper {
+[theme='#76CFC0'] {
     background-color: #76CFC0;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #76CFC0;
+    }
 }
 
-[theme='#0A6DC2']>>>.el-input__wrapper {
+[theme='#0A6DC2'] {
     background-color: #0A6DC2;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #0A6DC2;
+    }
 }
 
-[theme='#5A5265']>>>.el-input__wrapper {
+[theme='#5A5265'] {
     background-color: #5A5265;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #5A5265;
+    }
 }
 
-[theme='#EB8FE6']>>>.el-input__wrapper {
+[theme='#EB8FE6'] {
     background-color: #EB8FE6;
+
+    ::v-deep .el-input__wrapper {
+        background-color: #EB8FE6;
+    }
 }
 
 .emoji {
     font-size: 3em;
+}
+
+.skill-assign-tip {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #c45656;
+
+    & >* {
+        margin-left: 5px;
+    }
+}
+
+@keyframes blink {
+    from {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .2;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 </style>

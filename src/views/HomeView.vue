@@ -33,8 +33,8 @@
                 </li>
             </ul>
         </aside>
-        <section>
-            <header class="options">
+        <main>
+            <section class="options">
                 <h1 class="title">配置 <el-link target="blank" href="https://www.wyaq.com/youxi/jinshouzhi/11994.html">金手指</el-link>
                 </h1>
                 <div class="card-group">
@@ -69,8 +69,8 @@
                         </label>
                     </el-card>
                 </div>
-            </header>
-            <main class="result-panel">
+            </section>
+            <section class="result-panel">
                 <h1 class="title">预览</h1>
                 <div class="card-group">
                     <el-card class="box-card">
@@ -138,8 +138,8 @@
                         </ul>
                     </el-card>
                 </div>
-            </main>
-        </section>
+            </section>
+        </main>
         <el-dialog v-model="dialogVisible" :title="`搜索 “${keyword}”`" width="90%" top="60px">
             <iframe class="detail-iframe" :src="`https://wiki.52poke.com/wiki/${keyword}`" frameborder="0"></iframe>
             <template #footer>
@@ -195,7 +195,8 @@ export default {
             } = this;
             if (toolSkillUsage == 'tool-only') {
                 res = this.pickedPhaseSkills.map(el => el.name)
-            } else {
+            }
+            else {
                 res = this.pickedSkills.map(el => {
                     return el.type == 'tool' ? el.phase : el.name
                 })
@@ -387,7 +388,16 @@ export default {
             document.body.removeChild(ele);
         },
         exportPokemons() {
-            this.downFile(JSON.stringify(this.pokemons), 'pokemons.json')
+            this.$messageBox.prompt('', '设置文件名', {
+                confirmButtonText: '导出',
+                cancelButtonText: '取消',
+            }).then(({
+                value
+            }) => {
+                this.downFile(JSON.stringify(this.pokemons), `${value||'队伍配置'}.json`)
+            }).catch(() => {
+
+            })
         },
         importPokemons() {
             this.$refs['file'].click()
@@ -410,8 +420,8 @@ export default {
             if (slot) {
                 if (slot.type == 'tool') {
                     res = toolSkillUsage == 'tool-and-fight' ? phases.find(phase => phase.name == slot.phase).theme : null;
-
-                } else {
+                }
+                else {
                     res = slot.theme
                 }
             }
@@ -421,7 +431,10 @@ export default {
             this.$messageBox.prompt('', '设置头像', {
                 confirmButtonText: '设置',
                 cancelButtonText: '取消',
-            }).then(({value}) => {
+                inputValue: pokemon.avatar,
+            }).then(({
+                value
+            }) => {
                 pokemon.avatar = value
             }).catch(() => {
 
@@ -450,11 +463,6 @@ ul {
 .container {
     display: flex;
     padding: 15px;
-
-}
-
-aside {
-    margin-right: 15px;
 }
 
 aside .title {
@@ -474,19 +482,22 @@ aside .title .el-input {
     width: 11.2em;
 }
 
+aside{
+    margin-right: 15px;
+}
+
+section + section{
+    margin-top: 15px;
+}
+
 aside,
-header,
-main {
+section {
     padding: 15px;
     border-radius: 10px;
     background: rgba(255, 255, 255, .9);
 }
 
 main {
-    margin-top: 30px;
-}
-
-section {
     flex-grow: 1;
 }
 
@@ -655,6 +666,10 @@ input:not(:checked)+* {
 
 .colorfull .el-select-dropdown__item {
     color: #fff;
+}
+
+>>>.el-input__inner {
+    font-size: 16px;
 }
 
 [theme]>>>.el-input__inner {

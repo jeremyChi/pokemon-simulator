@@ -10,15 +10,34 @@
                 </div>
                 <el-button type="primary" size="small" @click="savePokemons()">保存</el-button>
                 <el-button type="danger" size="small" @click="clearPokemons()">清空</el-button>
-                <el-input style="margin-left: auto;" v-model="keyword" placeholder="键入并按回车搜索" @change="search(keyword)" />
+                <el-input style="margin-left: auto;" clearable v-model="keyword" placeholder="键入并按回车搜索" @keyup="onKeyUp" />
             </h1>
-           
+
             <ul class="pokemons">
                 <li class="pokemon" v-for="(pokemon,i) in pokemons">
+                    <el-dropdown class="action">
+                        <span class="el-dropdown-link">
+                            操作
+                            <el-icon class="el-icon--right">
+                                <arrow-down />
+                            </el-icon>
+                        </span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item @click="setName(pokemon)">重命名</el-dropdown-item>
+                                <el-dropdown-item divided @click="searchAvatar(pokemon)">搜索头像</el-dropdown-item>
+                                <el-dropdown-item @click="setAvatar(pokemon)">设置头像</el-dropdown-item>
+                                <el-dropdown-item divided @click="search(pokemon.name)">百科</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                     <div class="avatar" :mode="mode" :slotsfullfilled="pokemon.slots.filter(el=>el?.name).length == pokemon.slots.length" :skillexist="!!pokemon.slots.map(el=>el?.name).includes(activeSkill?.name)" :progress="pokemon.slots.filter(el=>!!el).length" @click="onAvatarClick(pokemon)">
                         <el-image style="width: 100%; height: 100%" v-if="pokemon.avatar" :src="pokemon.avatar" />
                     </div>
-                    <el-input class="pokemon-name" type="text" v-model="pokemon.name"></el-input>
+                    <span class="pokemon-name" v-if="pokemon.name">
+                        <el-link class="link" @click="search(pokemon.name)">{{pokemon.name}}</el-link>
+                    </span>
+                    <span class="pokemon-name unnamed" v-else>未命名</span>
                     <ul class="slots">
                         <li class="slot" v-for="(slot,index) in pokemon.slots">
                             <el-select class="txt-select" :theme="getTheme(slot)" placeholder="请选择" v-model="pokemons[i].slots[index]" clearable value-key="name">
@@ -46,12 +65,12 @@
                             </div>
                         </template>
                         <label>
-                            <input type="radio" v-model="toolSkillUsage" value="tool-only">
-                            仅用作工具
-                        </label>
-                        <label>
                             <input type="radio" v-model="toolSkillUsage" value="tool-and-fight">
                             可用来攻击
+                        </label>
+                        <label>
+                            <input type="radio" v-model="toolSkillUsage" value="tool-only">
+                            仅用作工具
                         </label>
                     </el-card>
                     <el-card class="box-card">
@@ -78,12 +97,14 @@
                         <template #header>
                             <div class="card-header">
                                 <span>已选择的工具技能</span><span v-if="(toolSkills.length) == (pickedToolSkills.length)">👍</span>
+                                <div class="skill-assign-tip" v-if="mode == 'skill-assign'">
+                                    <el-button type="danger" size="small" @click="cancelSkillAssign()">取消技能分配</el-button>
+                                </div>
                             </div>
                         </template>
-                        <h2 class="skill-assign-tip" v-if="mode == 'skill-assign'">点击左侧精灵球以分配 <el-button type="danger" size="small" @click="cancelSkillAssign()">取消技能分配</el-button>
-                        </h2>
+
                         <ul class="data-list">
-                            <li class="data-item" :class="{'phase' : toolSkillUsage == 'tool-and-fight'}" v-for="el in toolSkills" @click="handleAssignToolSkill(el)">
+                            <li class="data-item" :class="{'phase' : toolSkillUsage == 'tool-and-fight', 'active' : activeSkill?.name == el.name}" v-for="el in toolSkills" @click="handleAssignToolSkill(el)">
                                 <label>
                                     <input class="hidden" disabled type="checkbox" :value="el" v-model="pickedToolSkills">
                                     <span class="name" :theme="getTheme(el)" style="color: #000;">{{el.name}}</span>
@@ -154,6 +175,10 @@
     </div>
 </template>
 <script>
+import {
+    ArrowDown
+}
+from '@element-plus/icons-vue'
 let emptyPokemons = [{
     name: '',
     avatar: '',
@@ -180,6 +205,9 @@ let emptyPokemons = [{
     slots: [null, null, null, null, ],
 }]
 export default {
+    components: {
+        ArrowDown
+    },
     computed: {
         pickedSkills: function() {
             return this.pokemons.map(el => el.slots).flat().filter(el => !!el)
@@ -225,7 +253,7 @@ export default {
             activeSkill: null,
             keyword: '',
             dialogVisible: false,
-            toolSkillUsage: 'tool-only',
+            toolSkillUsage: 'tool-and-fight',
             position: 'attack',
             pokemons: emptyPokemons,
             toolSkills: [{
@@ -272,6 +300,10 @@ export default {
                     name: '碎岩',
                     type: 'tool',
                     phase: '格斗',
+                },{
+                    name: '头突',
+                    type: 'tool',
+                    phase: '一般',
                 },
             ],
             phases: [{
@@ -370,8 +402,11 @@ export default {
 
     methods: {
         search(input) {
-            this.keyword = input;
+            this.keyword = input ? input : this.keyword;
             this.dialogVisible = true;
+        },
+        searchAvatar(pokemon) {
+            window.open(`https://cn.bing.com/images/search?q=宝可梦 ${pokemon.name}&qft=+filterui:photo-transparent&form=IRFLTR&first=1&tsc=ImageHoverTitle`)
         },
         savePokemons() {
             localStorage.setItem('pokemons', JSON.stringify(this.pokemons));
@@ -441,7 +476,7 @@ export default {
             }
         },
         setAvatar(pokemon) {
-            this.$messageBox.prompt('', '设置头像', {
+            this.$messageBox.prompt('', '设置个头像吧！', {
                 confirmButtonText: '设置',
                 cancelButtonText: '取消',
                 inputValue: pokemon.avatar,
@@ -453,10 +488,31 @@ export default {
 
             })
         },
+        setName(pokemon) {
+            this.$messageBox.prompt('', '给宝可梦什么名字？', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                inputValue: pokemon.name,
+            }).then(({
+                value
+            }) => {
+                pokemon.name = value
+            }).catch(() => {
+
+            })
+        },
         handleAssignToolSkill(skill) {
-            this.mode = 'skill-assign';
-            this.activeSkill = skill;
-            this.$message.info('点击精灵球以分配')
+            if (this.pokemons.some(pokemon => {
+                    return pokemon.slots.filter(pokemon => pokemon && pokemon.name).length != pokemon.slots.length
+                })) {
+                this.mode = 'skill-assign';
+                this.activeSkill = skill;
+                this.$message.warning('点击左侧精灵球以分配')
+            }
+            else {
+                this.$message.warning('所有精灵技能已满，无法分配')
+            }
+
         },
         assignToolSkill(pokemon) {
             let emptySlotIndex = pokemon.slots.findIndex(el => !el || !el.name);
@@ -472,11 +528,24 @@ export default {
             this.mode = '';
             this.activeSkill = null;
         },
+        onKeyUp(e) {
+            if (e.which == 13) {
+                this.search()
+            }
+        },
     },
 
     mounted() {
-        if (localStorage.getItem('pokemons')) {
-            this.pokemons = JSON.parse(localStorage.getItem('pokemons'))
+        let pokemonsInLocalStorage = localStorage.getItem('pokemons');
+
+        if (pokemonsInLocalStorage) {
+            pokemonsInLocalStorage = JSON.parse(localStorage.getItem('pokemons'));
+            pokemonsInLocalStorage.forEach((el, i) => {
+                el.slots = el.slots.map(slot => {
+                    return this.toolSkills.find(skill => skill.name == slot.name) || this.phases.find(skill => skill.name == slot.name) || null
+                })
+            })
+            this.pokemons = pokemonsInLocalStorage
         }
     },
 }
@@ -558,6 +627,20 @@ input:not(:checked)+* {
 
     .pokemon {
         text-align: center;
+        position: relative;
+    }
+
+    .action {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+
+        .el-dropdown-link {
+            cursor: pointer;
+            color: var(--el-color-primary);
+            display: flex;
+            align-items: center;
+        }
     }
 }
 
@@ -568,17 +651,17 @@ input:not(:checked)+* {
     font-size: 16px;
     padding: 5px;
     margin-bottom: 10px;
+    display: inline-block;
 
-    ::v-deep {
-        .el-input__wrapper {
-            padding: 0 5px;
-        }
+    &,
+    ::v-deep .el-link__inner {
+        color: #000;
+        font-size: 16px;
+        font-weight: bold;
+    }
 
-        .el-input__inner {
-            text-align: center;
-            font-weight: bold;
-            color: #000;
-        }
+    &.unnamed {
+        color: #ccc;
     }
 }
 
@@ -666,6 +749,10 @@ input:not(:checked)+* {
     &.phase .name {
         border: none;
     }
+
+    &.active .name {
+        animation: blink 1s infinite;
+    }
 }
 
 .card-group {
@@ -698,13 +785,23 @@ input:not(:checked)+* {
     }
 }
 
-.el-select-group .el-select-dropdown__item {
-    margin: 5px;
+
+.el-select-group {
+    .el-select-dropdown__item {
+        &.selected {
+            box-shadow: 0 0 10px #000;
+        }
+
+        margin: 5px;
+    }
+
+
 }
 
 .colorfull .el-select-dropdown__item {
     color: #fff;
 }
+
 
 ::v-deep .el-input__inner {
     font-size: 16px;
@@ -873,13 +970,12 @@ input:not(:checked)+* {
 }
 
 .skill-assign-tip {
-    margin-bottom: 10px;
     display: flex;
     align-items: center;
     font-size: 12px;
     color: #c45656;
 
-    & >* {
+    &>* {
         margin-left: 5px;
     }
 }
@@ -896,5 +992,11 @@ input:not(:checked)+* {
     to {
         opacity: 1;
     }
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 </style>

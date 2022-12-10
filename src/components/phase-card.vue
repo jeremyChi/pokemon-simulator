@@ -11,7 +11,7 @@
                         </template>
                         <ul class="data-list">
                             <li class="data-item phase" v-for="el in phase.beGoodAt">
-                                <span class="name" :style="`background-color: ${types.find(i=>i.chinese == el).theme};`">{{el}}</span>
+                                <span class="name link" @click="wiki(el)" :style="`background-color: ${types.find(i=>i.chinese == el).theme};`">{{el}}</span>
                             </li>
                         </ul>
                     </el-card>
@@ -23,30 +23,38 @@
                         </template>
                         <ul class="data-list">
                             <li class="data-item phase" v-for="el in phase.beAfraidOf">
-                                <span class="name" :style="`background-color: ${types.find(i=>i.chinese == el).theme};`">{{el}}</span>
+                                <span class="name link" @click="wiki(el)" :style="`background-color: ${types.find(i=>i.chinese == el).theme};`">{{el}}</span>
                             </li>
                         </ul>
                     </el-card>
                 </div>
             </div>
         </div>
+        <wiki ref="wiki" :keyword="wikiKeyword"></wiki>
     </div>
 </template>
 <script>
 import types from '../dataset/types.json'
+import wiki from '../components/wiki.vue'
 export default {
     name: 'phase-card',
     props: ['phase'],
-    components: {},
+    components: {
+        wiki,
+    },
     computed: {},
     data() {
         return {
             types,
+            wikiKeyword: '',
         }
     },
 
     methods: {
-
+        wiki(input) {
+            this.wikiKeyword = input ? input : this.wikiKeyword;
+            this.$refs['wiki'].show()
+        },
     },
 
     mounted() {},
@@ -60,7 +68,7 @@ export default {
 
 .data-item {
     .name {
-        padding: 0 20px;
+        padding: 5px 10px;
         font-size: 14px;
         white-space: nowrap;
         margin: 5px;
@@ -71,7 +79,6 @@ export default {
         align-items: center;
         justify-content: center;
         color: #fff;
-        cursor: pointer;
         box-sizing: border-box;
     }
 

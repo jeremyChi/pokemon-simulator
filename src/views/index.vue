@@ -50,11 +50,11 @@
                 </li>
             </ul>
 
-            <el-drawer size="575" v-model="pokemonDrawer" title="请选择宝可梦">
+            <el-drawer size="580" v-model="pokemonDrawer" title="请选择宝可梦">
                 <pokemon-list @pick="onPokemonPick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></pokemon-list>
             </el-drawer>
 
-            <el-drawer size="575" v-model="moveDrawer" title="请选择技能">
+            <el-drawer size="580" v-model="moveDrawer" title="请选择技能">
                 <move-list @pick="onMovePick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></move-list>
             </el-drawer>
         </div>

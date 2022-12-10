@@ -97,7 +97,7 @@ export default {
         margin-top: 25px;
         display: grid;
         grid-template-columns: auto auto;
-        grid-gap: 10px;
+        grid-gap: 10px 5px;
         font-size: 14px;
         width: 100%;
 

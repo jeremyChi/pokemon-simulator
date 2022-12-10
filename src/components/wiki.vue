@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog v-model="visible" :title="`搜索 “${keyword}”`" width="90%" top="60px">
+        <el-dialog :append-to-body="true" v-model="visible" :title="`搜索 “${keyword}”`" width="90%" top="60px">
             <iframe class="detail-iframe" :src="`https://wiki.52poke.com/wiki/${keyword}`" frameborder="0"></iframe>
             <template #footer>
                 <span class="dialog-footer">

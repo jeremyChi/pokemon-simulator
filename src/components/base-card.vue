@@ -2,7 +2,7 @@
     <div style="height: 100%;">
         <div class="container species-strength">
             <ul>
-                <li v-for="(v,k) in base">
+                <li v-for="(v,k) in base" :key="k">
                     <span class="value">{{v}}</span>
                     <div class="bar"><span class="inner" :style="`height: ${v/255*100}%;background-color: ${theme[k]};`"></span></div>
                     <span class="name">{{k}}</span>

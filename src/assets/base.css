@@ -88,6 +88,11 @@ ul {
     cursor: pointer;
     text-decoration: underline;
 }
+
 .hidden {
     display: none;
+}
+
+.el-drawer__body {
+    overflow: hidden;
 }

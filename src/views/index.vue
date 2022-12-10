@@ -16,7 +16,7 @@
                     </el-popconfirm>
                     <el-input style="width:12em; margin-left: auto;" clearable v-model="wikiKeyword" placeholder="键入并按回车搜索wiki" @keyup="onKeyUp" />
                 </header>
-                <li class="position" v-for="(pokemon,i) in pokemons">
+                <li class="position" :key="pokemon.id" v-for="(pokemon,i) in pokemons">
                     <div class="pokemon-card">
                         <el-icon class="btn-remove btn-remove-pokemon" @click="pokemons.splice(i,1)">
                             <CircleCloseFilled />
@@ -26,7 +26,7 @@
                         </section>
                         <section class="moves">
                             <ul>
-                                <li v-for="(move,i) in pokemon.moves">
+                                <li :key="move.id" v-for="(move,i) in pokemon.moves">
                                     <el-icon @click="pokemon.moves.splice(i,1)" class="btn-remove btn-remove-move">
                                         <Remove />
                                     </el-icon>

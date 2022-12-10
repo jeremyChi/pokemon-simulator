@@ -47,6 +47,7 @@
                     <move-card :move="move"></move-card>
                 </li>
             </ul>
+            <el-pagination background :page-size="size" :current-page="page" layout="sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
             <div class="action-bar" v-if="mode == 'select'">
                 <el-button type="danger" @click="selection = []">清空选择</el-button>
                 <el-button type="primary" @click="onSubmit()">确认选择</el-button>
@@ -85,18 +86,11 @@ export default {
                 powerEnd = Infinity,
 
             } = this.searchForm;
-
-            return moves.filter(move => {
-                // let {
-                //     id,
-                //     cname,
-                //     category,
-                //     type,
-                //     accuracy,
-                //     power,
-                //     pp,
-                // } = move;
-
+            let {
+                page,
+                size
+            } = this;
+            let res = moves.filter(move => {
                 let nameMatch = move.cname.indexOf(keyword) > -1
                 let idMatch = move.id == keyword
                 let phaseMatch = !phase || (move.type == phase);
@@ -108,17 +102,31 @@ export default {
 
                 return keywordMatch && phaseMatch && categoryMatch && ppMatch && accuracyMatch && powerMatch
             })
+
+            this.total = res.length;
+
+            return res.splice((page - 1) * size, size)
         },
     },
     data() {
         return {
             searchForm: {},
+            size: 20,
+            page: 1,
+            total: 0,
             selection: [],
             types,
         }
     },
 
     methods: {
+        onPageChange(v) {
+            this.page = v;
+        },
+        onSizeChange(v) {
+            this.page = 1;
+            this.size = v;
+        },
         onMoveClick(move) {
             let {
                 mode,
@@ -147,12 +155,12 @@ export default {
                 this.$emit('pick', this.selection)
             }
         },
-        reset(){
+        reset() {
             this.searchForm = {
-                keyword : '',
-                phase : '',
-                category : '',
-                pp : '',
+                keyword: '',
+                phase: '',
+                category: '',
+                pp: '',
             }
         },
     },
@@ -207,5 +215,9 @@ export default {
     font-size: 3em;
     color: #337ecc;
     display: none;
+}
+
+.el-pagination {
+    margin-top: 10px;
 }
 </style>

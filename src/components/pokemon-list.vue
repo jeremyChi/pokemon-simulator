@@ -35,6 +35,7 @@
                     <pokemon-card :pokemon="pokemon"></pokemon-card>
                 </li>
             </ul>
+            <el-pagination background :page-size="size" :current-page="page" layout="sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
             <div class="action-bar" v-if="mode == 'select'">
                 <el-button type="danger" @click="selection = []">清空选择</el-button>
                 <el-button type="primary" @click="onSubmit()">确认选择</el-button>
@@ -67,9 +68,13 @@ export default {
                 secondPhase,
                 gen,
             } = this.searchForm;
+            let {
+                page,
+                size
+            } = this;
             let genRange = this.getGenRange(gen)
 
-            return pokedex.filter(pokemon => {
+            let res = pokedex.filter(pokemon => {
                 let {
                     name,
                     id,
@@ -86,11 +91,18 @@ export default {
 
                 return keywordMatch && firstPhaseMatch && secondPhaseMatch && genMatched
             })
+
+            this.total = res.length;
+
+            return res.splice((page - 1) * size, size)
         },
     },
     data() {
         return {
             searchForm: {},
+            size: 20,
+            page: 1,
+            total : 0,
             selection: [],
             types,
             genEndPoint: [151, 251, 386, 493, 649, 721, 809],
@@ -98,6 +110,13 @@ export default {
     },
 
     methods: {
+        onPageChange(v) {
+            this.page = v;
+        },
+        onSizeChange(v) {
+            this.page = 1;
+            this.size = v;
+        },
         onPokemonClick(pokemon) {
             let {
                 mode,
@@ -139,12 +158,12 @@ export default {
             let end = genEndPoint[gen - 1];
             return [start, end]
         },
-        reset(){
+        reset() {
             this.searchForm = {
-                keyword : '',
-                gen : '',
-                firstPhase : '',
-                secondPhase : '',
+                keyword: '',
+                gen: '',
+                firstPhase: '',
+                secondPhase: '',
             }
         },
     },
@@ -186,6 +205,10 @@ export default {
     .check-layer {
         display: inline-flex;
     }
+}
+
+.el-pagination {
+    margin-top: 10px;
 }
 
 .check-layer {

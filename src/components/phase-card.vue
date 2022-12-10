@@ -10,7 +10,7 @@
                             </div>
                         </template>
                         <ul class="data-list">
-                            <li class="data-item phase" v-for="el in phase.beGoodAt">
+                            <li class="data-item phase" :key="el" v-for="el in phase.beGoodAt">
                                 <span class="name link" @click="wiki(el)" :style="`background-color: ${types.find(i=>i.chinese == el).theme};`">{{el}}</span>
                             </li>
                         </ul>
@@ -22,7 +22,7 @@
                             </div>
                         </template>
                         <ul class="data-list">
-                            <li class="data-item phase" v-for="el in phase.beAfraidOf">
+                            <li class="data-item phase" :key="el" v-for="el in phase.beAfraidOf">
                                 <span class="name link" @click="wiki(el)" :style="`background-color: ${types.find(i=>i.chinese == el).theme};`">{{el}}</span>
                             </li>
                         </ul>

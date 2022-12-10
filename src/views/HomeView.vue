@@ -613,11 +613,7 @@ input:checked+* {
 }
 
 input:not(:checked)+* {
-    opacity: .3 !important;
-}
-
-input:not(:checked)+* {
-    opacity: .7;
+    opacity: .3;
 }
 
 .pokemons {
@@ -679,7 +675,7 @@ input:not(:checked)+* {
 
     &[mode="skill-assign"] {
         &[skillexist="false"][slotsfullfilled="false"] {
-            animation: blink 1s infinite;
+            animation: blink .8s infinite;
         }
 
         &[skillexist="true"],
@@ -751,7 +747,7 @@ input:not(:checked)+* {
     }
 
     &.active .name {
-        animation: blink 1s infinite;
+        animation: blink .8s infinite;
     }
 }
 

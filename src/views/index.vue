@@ -4,6 +4,7 @@
             <ul class="team">
                 <header class="tools">
                     <el-button type="primary" @click="pokemonDrawer=true">宝可梦列表</el-button>
+                    <el-button type="primary" @click="moveDrawer=true">技能列表</el-button>
                     <el-button type="primary" @click="exportPokemons()">导出队伍</el-button>
                     <div class="import-container">
                         <el-button type="primary" class="btn-import" @click="importPokemons()">导入队伍 </el-button>

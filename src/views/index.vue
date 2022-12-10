@@ -15,6 +15,7 @@
                             <el-button type="danger">清空</el-button>
                         </template>
                     </el-popconfirm>
+                    <el-link target="blank" href="https://www.wyaq.com/youxi/jinshouzhi/11994.html">金手指</el-link>
                     <el-input style="width:12em; margin-left: auto;" clearable v-model="wikiKeyword" placeholder="键入并按回车搜索wiki" @keyup="onKeyUp" />
                 </header>
                 <li class="position" :key="pokemon.id" v-for="(pokemon,i) in pokemons">
@@ -51,11 +52,11 @@
                 </li>
             </ul>
 
-            <el-drawer size="580" @opened="$refs['pokemon-list'].reset()" v-model="pokemonDrawer" title="请选择宝可梦">
+            <el-drawer size="580" @opened="$refs['pokemon-list'].reset();$refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
                 <pokemon-list ref="pokemon-list" @pick="onPokemonPick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></pokemon-list>
             </el-drawer>
 
-            <el-drawer size="580" @opened="$refs['move-list'].reset()" v-model="moveDrawer" title="请选择技能">
+            <el-drawer size="580" @opened="$refs['move-list'].reset();$refs['move-list'].clearSelection()" v-model="moveDrawer" title="请选择技能">
                 <move-list ref="move-list" @pick="onMovePick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></move-list>
             </el-drawer>
         </div>

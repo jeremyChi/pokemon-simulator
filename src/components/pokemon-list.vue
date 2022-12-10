@@ -41,9 +41,9 @@
                     <pokemon-card :pokemon="pokemon"></pokemon-card>
                 </li>
             </ul>
-            <el-pagination background :page-size="size" :current-page="page" layout="sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
+            <el-pagination background :page-size="size" :current-page="page" small layout="total, sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
             <div class="action-bar" v-if="mode == 'select'">
-                <el-button type="danger" @click="selection = []">清空选择</el-button>
+                <el-button type="danger" @click="clearSelection()">清空选择</el-button>
                 <el-button type="primary" @click="onSubmit()">确认选择</el-button>
             </div>
         </div>
@@ -170,6 +170,8 @@ export default {
                 size: 20,
                 page: 1,
             }
+        },
+        clearSelection(){
             this.selection = []
         },
     },

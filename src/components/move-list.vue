@@ -53,9 +53,9 @@
                     <move-card :move="move"></move-card>
                 </li>
             </ul>
-            <el-pagination background :page-size="size" :current-page="page" layout="sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
+            <el-pagination background :page-size="size" :current-page="page" small layout="total, sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
             <div class="action-bar" v-if="mode == 'select'">
-                <el-button type="danger" @click="selection = []">清空选择</el-button>
+                <el-button type="danger" @click="clearSelection()">清空选择</el-button>
                 <el-button type="primary" @click="onSubmit()">确认选择</el-button>
             </div>
         </div>
@@ -86,10 +86,10 @@ export default {
                 phase,
                 category,
                 pp,
-                accuracyStart = 0,
-                accuracyEnd = 100,
-                powerStart = 0,
-                powerEnd = Infinity,
+                accuracyStart,
+                accuracyEnd,
+                powerStart,
+                powerEnd,
 
             } = this.searchForm;
             let {
@@ -101,11 +101,10 @@ export default {
                 let idMatch = move.id == keyword
                 let phaseMatch = !phase || (move.type == phase);
                 let keywordMatch = !keyword || nameMatch || idMatch;
-                let categoryMatch = !category || category == move.category
+                let categoryMatch = !category || category == move.category;
                 let ppMatch = !pp || +pp == move.pp
-                let accuracyMatch = move.accuracy && (move.accuracy >= accuracyStart && move.accuracy <= accuracyEnd)
-                let powerMatch = move.power && (move.power >= powerStart && move.power <= powerEnd)
-
+                let accuracyMatch = (!accuracyStart && !accuracyEnd) || (move.accuracy && (move.accuracy >= accuracyStart && move.accuracy <= accuracyEnd))
+                let powerMatch = (!powerStart && !powerEnd) || ( move.power && (move.power >= powerStart && move.power <= powerEnd))
                 return keywordMatch && phaseMatch && categoryMatch && ppMatch && accuracyMatch && powerMatch
             })
 
@@ -167,6 +166,8 @@ export default {
                 size: 20,
                 page: 1,
             }
+        },
+        clearSelection(){
             this.selection = []
         },
     },

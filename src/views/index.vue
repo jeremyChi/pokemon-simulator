@@ -3,6 +3,7 @@
         <div class="container">
             <ul class="team">
                 <header class="tools">
+                    <el-button type="primary" @click="pokemonDrawer=true">宝可梦列表</el-button>
                     <el-button type="primary" @click="exportPokemons()">导出队伍</el-button>
                     <div class="import-container">
                         <el-button type="primary" class="btn-import" @click="importPokemons()">导入队伍 </el-button>
@@ -50,12 +51,12 @@
                 </li>
             </ul>
 
-            <el-drawer size="580" v-model="pokemonDrawer" title="请选择宝可梦">
-                <pokemon-list @pick="onPokemonPick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></pokemon-list>
+            <el-drawer size="580" @opened="$refs['pokemon-list'].reset()" v-model="pokemonDrawer" title="请选择宝可梦">
+                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></pokemon-list>
             </el-drawer>
 
-            <el-drawer size="580" v-model="moveDrawer" title="请选择技能">
-                <move-list @pick="onMovePick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></move-list>
+            <el-drawer size="580" @opened="$refs['move-list'].reset()" v-model="moveDrawer" title="请选择技能">
+                <move-list ref="move-list" @pick="onMovePick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></move-list>
             </el-drawer>
         </div>
         <wiki ref="wiki" :keyword="wikiKeyword"></wiki>
@@ -113,8 +114,7 @@ export default {
             this.moveDrawer = false;
             if (!pokemon.moves) {
                 pokemon.moves = [...moves]
-            }
-            else {
+            } else {
                 pokemon.moves = [...pokemon.moves, ...moves]
             }
         },
@@ -192,13 +192,6 @@ export default {
     font-family: 'dinpro';
 }
 
-.btn-remove {
-    position: absolute;
-    cursor: pointer;
-    color: red;
-    font-size: 2em;
-    z-index: 1;
-}
 
 .tools {
     background-color: rgba(255, 255, 255, .75);

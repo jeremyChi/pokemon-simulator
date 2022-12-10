@@ -96,3 +96,11 @@ ul {
 .el-drawer__body {
     overflow: hidden;
 }
+
+.btn-remove {
+    position: absolute;
+    cursor: pointer;
+    color: red;
+    font-size: 2em;
+    z-index: 1;
+}

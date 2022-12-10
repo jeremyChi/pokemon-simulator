@@ -5,13 +5,13 @@
                 <img class="avatar" :src="`/src/dataset/images/${`${pokemon.id}`.padStart(3,0)}.png`">
                 <el-popover placement="top-start" title="宝可梦详情" :width="200" trigger="hover">
                     <template #reference>
-                        <span @click="wiki(pokemon.name.chinese)" class="pokemon-name link">{{pokemon.name.chinese}} <small>[{{`${`${pokemon.id}`.padStart(3,0)}`}}]</small> </span>
+                        <span @click.stop="wiki(pokemon.name.chinese)" class="pokemon-name link">{{pokemon.name.chinese}} <small>[{{`${`${pokemon.id}`.padStart(3,0)}`}}]</small> </span>
                     </template>
                     <base-card :base="pokemon.base"></base-card>
                 </el-popover>
 
                 <ul class="type">
-                    <li @click="wiki(type)" class="type-tag link" :style="`background-color: ${types.find(el=>el.english == type).theme};`" v-for="type in pokemon.type" :key="type">
+                    <li @click.stop="wiki(type)" class="type-tag link" :style="`background-color: ${types.find(el=>el.english == type).theme};`" v-for="type in pokemon.type" :key="type">
                         <el-popover placement="top-start" trigger="hover" width="300">
                             <template #reference>
                                 {{types.find(el=>el.english == type).chinese}}

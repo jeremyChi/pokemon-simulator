@@ -25,7 +25,13 @@
                 </el-form-item>
             </el-form>
             <div class="selection" style="line-height: 1.4;padding: 10px;">
-                已经选择了: {{selection.map(el=>el.name.chinese).join('、')}}
+                已经选择了:
+                <ul>
+                    <li v-for="(el,i) in selection">{{el.name.chinese}} <el-icon @click="selection.splice(i,1)" class="btn-remove btn-remove-selection">
+                            <Remove />
+                        </el-icon>
+                    </li>
+                </ul>
             </div>
             <ul class="pokemons" :mode="mode">
                 <li class="pokemon" :checked="selection.map(el=>el.id).includes(pokemon.id)" v-for="(pokemon,i) in pokemons" :key="pokemon.id" @click="onPokemonClick(pokemon)">
@@ -102,7 +108,7 @@ export default {
             searchForm: {},
             size: 20,
             page: 1,
-            total : 0,
+            total: 0,
             selection: [],
             types,
             genEndPoint: [151, 251, 386, 493, 649, 721, 809],
@@ -127,12 +133,10 @@ export default {
                 if (index < 0) {
                     if (multiple) {
                         this.selection.push(pokemon)
-                    }
-                    else {
+                    } else {
                         this.selection = [pokemon]
                     }
-                }
-                else {
+                } else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -140,8 +144,7 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择精灵')
-            }
-            else {
+            } else {
                 this.$emit('pick', this.selection)
             }
         },
@@ -164,7 +167,10 @@ export default {
                 gen: '',
                 firstPhase: '',
                 secondPhase: '',
+                size: 20,
+                page: 1,
             }
+            this.selection = []
         },
     },
 
@@ -222,5 +228,24 @@ export default {
     font-size: 3em;
     color: #337ecc;
     display: none;
+}
+
+.selection {
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+
+        li {
+            padding: 5px;
+            margin: 5px;
+            background-color: #efefef;
+        }
+    }
+}
+
+.btn-remove-selection {
+    font-size: 16px;
+    top: -5px;
+    right: -5px;
 }
 </style>

@@ -37,7 +37,13 @@
                 </el-form-item>
             </el-form>
             <div class="selection" style="line-height: 1.4;padding: 10px;">
-                已经选择了: {{selection.map(el=>el.cname).join('、')}}
+                已经选择了:
+                <ul>
+                    <li v-for="(el,i) in selection">{{el.cname}} <el-icon @click="selection.splice(i,1)" class="btn-remove btn-remove-selection">
+                            <Remove />
+                        </el-icon>
+                    </li>
+                </ul>
             </div>
             <ul class="moves" :mode="mode">
                 <li class="move" :checked="selection.map(el=>el.id).includes(move.id)" v-for="(move,i) in moves" :key="move.id" @click="onMoveClick(move)">
@@ -137,12 +143,10 @@ export default {
                 if (index < 0) {
                     if (multiple) {
                         this.selection.push(move)
-                    }
-                    else {
+                    } else {
                         this.selection = [move]
                     }
-                }
-                else {
+                } else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -150,8 +154,7 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择技能')
-            }
-            else {
+            } else {
                 this.$emit('pick', this.selection)
             }
         },
@@ -161,7 +164,10 @@ export default {
                 phase: '',
                 category: '',
                 pp: '',
+                size: 20,
+                page: 1,
             }
+            this.selection = []
         },
     },
 
@@ -219,5 +225,24 @@ export default {
 
 .el-pagination {
     margin-top: 10px;
+}
+
+.selection {
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+
+        li {
+            padding: 5px;
+            margin: 5px;
+            background-color: #efefef;
+        }
+    }
+}
+
+.btn-remove-selection {
+    font-size: 16px;
+    top: -5px;
+    right: -5px;
 }
 </style>

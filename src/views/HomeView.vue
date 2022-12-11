@@ -124,7 +124,7 @@
                                 <label @click="search(phase.name)">
                                     <input class="hidden" disabled v-if="position == 'attack'" type="checkbox" :value="phase.name" v-model="phasesWeCanDefeat">
                                     <input class="hidden" disabled v-else type="checkbox" :value="phase.name" v-model="phasesWeFeared">
-                                    <el-popover trigger="hover" width="500">
+                                    <el-popover :show-after="400" :hide-after="40" trigger="hover" width="500">
                                         <template #reference>
                                             <span class="name" :theme="phase.theme">{{phase.name}}</span>
                                         </template>

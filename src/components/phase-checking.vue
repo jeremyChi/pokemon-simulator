@@ -1,50 +1,41 @@
 <template>
     <div>
-        <el-dialog :append-to-body="true" v-model="visible" title="队伍属性检测" width="90%" top="60px">
-            <main class="main">
-                <el-card class="box-card">
-                    <template #header>
-                        <div class="card-header">
-                            <p class="title"><span class="emoji">😍</span><span v-if="phases.length == phasesWeCanDefeat.length">👍</span></p>
-                        </div>
-                    </template>
-                    <ul class="data-list">
-                        <li class="data-item phase" v-for="cname in phasesWeCanDefeat">
-                            <el-popover placement="top-start" trigger="hover" width="300">
-                                <template #reference>
-                                    <span class="name link" @click.stop="wiki(cname)" :style="`background-color: ${types.find(el=>el.chinese == cname).theme};`">{{cname}}</span>
-                                </template>
-                                <phase-card :phase="types.find(el=>el.chinese == cname)"></phase-card>
-                            </el-popover>
-                        </li>
-                    </ul>
-                </el-card>
-
-                <el-card class="box-card">
-                    <template #header>
-                        <div class="card-header">
-                            <p class="title"><span class="emoji">😱</span><span v-if="!phasesWeFeared.length">👍</span></p>
-                        </div>
-                    </template>
-                    <ul class="data-list">
-                        <li class="data-item phase" v-for="cname in phasesWeFeared">
-                            <el-popover placement="top-start" trigger="hover" width="300">
-                                <template #reference>
-                                    <span class="name link" @click.stop="wiki(cname)" :style="`background-color: ${types.find(el=>el.chinese == cname).theme};`">{{cname}}</span>
-                                </template>
-                                <phase-card :phase="types.find(el=>el.chinese == cname)"></phase-card>
-                            </el-popover>
-                        </li>
-                    </ul>
-                </el-card>
-
-            </main>
-            <template #footer>
-                <span class="dialog-footer">
-                    <el-button @click="visible = false">关闭</el-button>
-                </span>
-            </template>
-        </el-dialog>
+        <main class="main">
+            <el-card class="box-card">
+                <template #header>
+                    <div class="card-header">
+                        <p class="title"><span class="emoji">😍</span><span v-if="phases.length == phasesWeCanDefeat.length">👍</span></p>
+                    </div>
+                </template>
+                <ul class="data-list">
+                    <li class="data-item phase" v-for="cname in phasesWeCanDefeat">
+                        <el-popover :show-after="400" :hide-after="40" placement="top-start" trigger="hover" width="300">
+                            <template #reference>
+                                <span class="name link" @click.stop="wiki(cname)" :style="`background-color: ${types.find(el=>el.chinese == cname).theme};`">{{cname}}</span>
+                            </template>
+                            <phase-card :phase="types.find(el=>el.chinese == cname)"></phase-card>
+                        </el-popover>
+                    </li>
+                </ul>
+            </el-card>
+            <el-card class="box-card">
+                <template #header>
+                    <div class="card-header">
+                        <p class="title"><span class="emoji">😱</span><span v-if="!phasesWeFeared.length">👍</span></p>
+                    </div>
+                </template>
+                <ul class="data-list">
+                    <li class="data-item phase" v-for="cname in phasesWeFeared">
+                        <el-popover :show-after="400" :hide-after="40" placement="top-start" trigger="hover" width="300">
+                            <template #reference>
+                                <span class="name link" @click.stop="wiki(cname)" :style="`background-color: ${types.find(el=>el.chinese == cname).theme};`">{{cname}}</span>
+                            </template>
+                            <phase-card :phase="types.find(el=>el.chinese == cname)"></phase-card>
+                        </el-popover>
+                    </li>
+                </ul>
+            </el-card>
+        </main>
     </div>
 </template>
 <script>
@@ -74,28 +65,17 @@ export default {
     data() {
         return {
             types,
-            visible: false,
         }
     },
 
     methods: {
-        show() {
-            this.visible = true;
-        },
-        hide() {
-            this.visible = false;
-        },
+
     },
 
     mounted() {},
 }
 </script>
 <style scoped lang="scss">
-.main {
-    width: 100%;
-    height: calc(100vh - 300px);
-}
-
 .data-list {
     display: flex;
     flex-wrap: wrap;

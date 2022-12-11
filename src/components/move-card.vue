@@ -4,7 +4,7 @@
             <section class="basic">
                 <p class="move-name">
                     <span class="title link" @click.stop="wiki(move.cname)">{{move.cname}} </span>
-                    <el-popover placement="top-start" trigger="hover" width="300">
+                    <el-popover :show-after="400" :hide-after="40" placement="top-start" trigger="hover" width="300">
                         <template #reference>
                             <small @click.stop="wiki(move.type)" class="type-tag link" :style="`background-color: ${types.find(el=>el.english == move.type).theme};`">
                                 {{types.find(el=>el.english == move.type).chinese}}

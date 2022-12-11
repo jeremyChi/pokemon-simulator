@@ -9,7 +9,7 @@
                 </li>
                 <li>
                     <span class="value total">{{Object.values(base).reduce((m,n)=>m+n)}}</span>
-                    <small class="name">合计</small>
+                    <small class="name">总和</small>
                 </li>
             </ul>
         </div>
@@ -24,12 +24,12 @@ export default {
     data() {
         return {
             theme: {
-                "HP": '#FF0000',
-                "Atk": '#F5AC78',
-                "Def": '#FAE078',
-                "SpA": '#9DB7F5',
-                "SpD": '#A7DB8D',
-                "Spe": '#FA92B2'
+                "HP": '#8AC654',
+                "Atk": '#F8CB3C',
+                "Def": '#D98837',
+                "SpA": '#59C3D0',
+                "SpD": '#5890CD',
+                "Spe": '#A456D0'
             },
         }
     },
@@ -47,7 +47,7 @@ export default {
 
     ul {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         height: 100%;
         min-height: 140px;
         padding: 15px 0;
@@ -58,6 +58,7 @@ export default {
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
 
             .value {
                 margin-bottom: 5px;

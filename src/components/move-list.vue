@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div class="container">
+    <div class="fullheight">
+        <div class="container fullheight">
             <el-form label-width="6em" class="search-bar" :inline="true" :model="searchForm">
                 <el-form-item label="关键字">
                     <el-input style="width: 8em;" clearable v-model="searchForm.keyword" placeholder="名字/编号" />

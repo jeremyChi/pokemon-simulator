@@ -14,7 +14,7 @@
                 <input class="hidden" @change="onFileChange" ref="file" id="file" type="file" />
 
                 <el-button-group>
-                    <el-button type="primary" @click="$refs['phase-checking'].show()">属性检测</el-button>
+                    <el-button type="primary" @click="phaseCheckingDrawer = true">属性检测</el-button>
                 </el-button-group>
 
                 <el-button-group>
@@ -74,16 +74,20 @@
                 </el-icon>
             </div>
 
-            <el-drawer size="580" @opened="$refs['pokemon-list'].reset();$refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
-                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></pokemon-list>
+            <el-drawer direction="ttb" size="690px" @opened="$refs['pokemon-list'].reset(); $refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
+                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" mode="select" multiple="true"></pokemon-list>
             </el-drawer>
 
-            <el-drawer size="580" @opened="$refs['move-list'].reset();$refs['move-list'].clearSelection()" v-model="moveDrawer" title="请选择技能">
-                <move-list ref="move-list" @pick="onMovePick" style="height: calc(100vh - 120px);" mode="select" multiple="true"></move-list>
+            <el-drawer direction="ttb" size="590px" @opened="$refs['move-list'].reset(); $refs['move-list'].clearSelection()" v-model="moveDrawer" title="请选择技能">
+                <move-list ref="move-list" @pick="onMovePick" mode="select" multiple="true"></move-list>
+            </el-drawer>
+
+            <el-drawer direction="ttb" size="500px" v-model="phaseCheckingDrawer" title="队伍属性检测">
+                <phase-checking ref="phase-checking" :phases="teamPhases"></phase-checking>
             </el-drawer>
         </div>
         <wiki ref="wiki" :keyword="wikiKeyword"></wiki>
-        <phase-checking ref="phase-checking" :phases="teamPhases"></phase-checking>
+        
     </div>
 </template>
 <script>
@@ -123,6 +127,7 @@ export default {
             pokemons: [],
             pokemonDrawer: false,
             moveDrawer: false,
+            phaseCheckingDrawer: false,
             activePokemonIndex: '',
             wikiKeyword: '',
         }

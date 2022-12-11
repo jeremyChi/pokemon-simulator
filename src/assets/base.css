@@ -73,6 +73,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+@font-face {
+    font-family: dinpro;
+    src: url(DINPro.ttf);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -96,7 +101,6 @@ ul {
 }
 
 .el-drawer__body {
-    overflow: hidden;
 }
 
 .btn-remove {
@@ -105,4 +109,8 @@ ul {
     color: red;
     font-size: 2em;
     z-index: 1;
+}
+
+.fullheight {
+    height: 100%;
 }

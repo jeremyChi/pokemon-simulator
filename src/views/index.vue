@@ -3,8 +3,8 @@
         <div class="container">
             <header class="tools">
                 <el-button-group>
-                    <el-button type="primary" @click="pokemonDrawer=true">宝可梦列表</el-button>
-                    <el-button type="primary" @click="moveDrawer=true">技能列表</el-button>
+                    <el-button type="primary" @click="mode='view'; pokemonDrawer=true">宝可梦列表</el-button>
+                    <el-button type="primary" @click="mode='view'; moveDrawer=true">技能列表</el-button>
                 </el-button-group>
 
                 <el-button-group>
@@ -75,11 +75,11 @@
             </div>
 
             <el-drawer direction="ttb" size="690px" @opened="$refs['pokemon-list'].reset(); $refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
-                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" mode="select" multiple="true"></pokemon-list>
+                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" :mode="mode" multiple="true"></pokemon-list>
             </el-drawer>
 
             <el-drawer direction="ttb" size="590px" @opened="$refs['move-list'].reset(); $refs['move-list'].clearSelection()" v-model="moveDrawer" title="请选择技能">
-                <move-list ref="move-list" @pick="onMovePick" mode="select" multiple="true"></move-list>
+                <move-list ref="move-list" @pick="onMovePick" :mode="mode" multiple="true"></move-list>
             </el-drawer>
 
             <el-drawer direction="ttb" size="500px" v-model="phaseCheckingDrawer" title="队伍属性检测">
@@ -130,14 +130,17 @@ export default {
             phaseCheckingDrawer: false,
             activePokemonIndex: '',
             wikiKeyword: '',
+            mode : 'view',
         }
     },
 
     methods: {
         choosePokemon() {
+            this.mode='select';
             this.pokemonDrawer = true;
         },
         chooseMove(i) {
+            this.mode='select';
             this.activePokemonIndex = i;
             this.moveDrawer = true;
         },

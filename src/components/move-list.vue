@@ -36,7 +36,7 @@
                     <el-button type="primary" @click="reset()">重置</el-button>
                 </el-form-item>
             </el-form>
-            <div class="selection" style="line-height: 1.4;padding: 10px;">
+            <div class="selection" v-show="mode == 'select'" style="line-height: 1.4;padding: 10px;">
                 已经选择了:
                 <ul>
                     <li v-for="(el,i) in selection">{{el.cname}}
@@ -54,7 +54,7 @@
                     <move-card :move="move"></move-card>
                 </li>
             </ul>
-            <el-pagination background :page-size="size" :current-page="page" small layout="total, sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
+            <el-pagination background :page-size="size" :current-page="page" layout="total, sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
             <div class="action-bar" v-if="mode == 'select'">
                 <el-button type="danger" @click="clearSelection()">清空选择</el-button>
                 <el-button type="primary" @click="onSubmit()">确认选择</el-button>

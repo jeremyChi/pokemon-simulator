@@ -11,11 +11,13 @@
                     <base-card :base="pokemon.base"></base-card>
                 </el-popover>
 
-                <ul class="type">
-                    <li @click.stop="wiki(type)" class="type-tag link" :style="`background-color: ${types.find(el=>el.english == type).theme};`" v-for="type in pokemon.type" :key="type">
+                <ul class="types">
+                    <li @click.stop="wiki(type)" v-for="type in pokemon.type" :key="type">
                         <el-popover :show-after="400" :hide-after="40" placement="top-start" trigger="hover" width="380">
                             <template #reference>
-                                {{types.find(el=>el.english == type).chinese}}
+                                <span class="type-tag link" :style="`background-color: ${types.find(el=>el.english == type).theme};`">
+                                    {{types.find(el=>el.english == type).chinese}}
+                                </span>
                             </template>
                             <phase-card :phase="types.find(el=>el.english == type)"></phase-card>
                         </el-popover>
@@ -80,21 +82,20 @@ export default {
         }
     }
 
-    .type {
-        margin-top: 10px;
+    .types {
+        margin-top: 15px;
         display: flex;
         align-items: center;
+
+        li+li {
+            margin-left: 5px;
+        }
 
         .type-tag {
             padding: 5px 10px;
             color: #fff;
             font-size: 14px;
-
-            &+.type-tag {
-                margin-left: 5px;
-            }
         }
     }
 }
-
 </style>

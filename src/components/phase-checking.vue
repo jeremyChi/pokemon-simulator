@@ -83,13 +83,12 @@ export default {
 
 .data-item {
     .name {
-        padding: 0 20px;
-        font-size: 18px;
+        padding: 5px 10px;
+        font-size: 14px;
         white-space: nowrap;
         margin: 5px 10px;
         border: 1px solid;
         box-sizing: border-box;
-        height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -97,18 +96,10 @@ export default {
         cursor: pointer;
         box-sizing: border-box;
     }
-
-    &.phase .name {
-        border: none;
-    }
-
-    &.active .name {
-        animation: blink .8s infinite;
-    }
 }
 
 .emoji {
-    font-size: 3em;
+    font-size: 2em;
 }
 
 .box-card+.box-card {

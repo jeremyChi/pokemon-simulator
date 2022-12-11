@@ -30,7 +30,7 @@
                 <el-input style="width:12em; margin-left: auto;" clearable v-model="wikiKeyword" placeholder="键入并按回车搜索wiki" @keyup="onKeyUp" />
             </header>
 
-            <ul class="team" :grabbing="drag">
+            <ul class="team" :grabbing="drag" v-show="pokemons.length">
                 <draggable class="members" v-model="pokemons" @start="drag=true" @end="drag=false" item-key="id">
                     <template #item="{element:pokemon,index:i}">
                         <li class="position">
@@ -107,10 +107,12 @@ export default {
         phaseChecking,
     },
     computed: {
-        teamPhases : function(){
-            let {pokemons} = this;
-            let moves = pokemons.map(el=>el.moves).flat();
-            let phases = moves.map(el=>el.type)
+        teamPhases: function() {
+            let {
+                pokemons
+            } = this;
+            let moves = pokemons.map(el => el.moves || []).flat();
+            let phases = moves.map(el => el.type)
             phases = [...new Set(phases)]
             return phases;
         },
@@ -267,7 +269,7 @@ export default {
 
 .position {
     background-color: rgba(255, 255, 255, .75);
-    padding: 5px;
+    padding: 10px;
     width: 400px;
     position: relative;
 

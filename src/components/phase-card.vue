@@ -87,4 +87,8 @@ export default {
 .box-card+.box-card {
     margin-top: 20px;
 }
+
+.emoji {
+    font-size: 2em;
+}
 </style>

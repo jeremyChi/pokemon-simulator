@@ -7,6 +7,10 @@
                     <div class="bar"><span class="inner" :style="`height: ${v/255*100}%;background-color: ${theme[k]};`"></span></div>
                     <span class="name">{{k}}</span>
                 </li>
+                <li>
+                    <span class="value total">{{Object.values(base).reduce((m,n)=>m+n)}}</span>
+                    <small class="name">合计</small>
+                </li>
             </ul>
         </div>
     </div>
@@ -76,5 +80,10 @@ export default {
             }
         }
     }
+}
+
+.total {
+    font-weight: bold;
+    font-size: 1.2em;
 }
 </style>

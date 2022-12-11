@@ -3,7 +3,8 @@
         <div class="container">
             <section class="basic">
                 <img class="avatar" :src="`/src/dataset/images/${`${pokemon.id}`.padStart(3,0)}.png`">
-                <el-popover placement="top-start" title="宝可梦详情" :width="200" trigger="hover">
+                <!-- <img class="avatar" :src="`https://img.pokemondb.net/sprites/home/normal/2x/${pokemon.name.english.toLowerCase()}.jpg`"> -->
+                <el-popover placement="top-end" title="宝可梦详情" :width="300" trigger="hover">
                     <template #reference>
                         <span @click.stop="wiki(pokemon.name.chinese)" class="pokemon-name link">{{pokemon.name.chinese}} <small>[{{`${`${pokemon.id}`.padStart(3,0)}`}}]</small> </span>
                     </template>
@@ -61,7 +62,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #efefef;
+    background-color: #fff;
     padding: 10px;
 
     .avatar {

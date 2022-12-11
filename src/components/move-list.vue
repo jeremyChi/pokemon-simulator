@@ -39,8 +39,9 @@
             <div class="selection" style="line-height: 1.4;padding: 10px;">
                 已经选择了:
                 <ul>
-                    <li v-for="(el,i) in selection">{{el.cname}} <el-icon @click="selection.splice(i,1)" class="btn-remove btn-remove-selection">
-                            <Remove />
+                    <li v-for="(el,i) in selection">{{el.cname}}
+                        <el-icon @click="selection.splice(i,1)" class="btn-remove btn-remove-selection">
+                            <CloseBold />
                         </el-icon>
                     </li>
                 </ul>
@@ -236,7 +237,8 @@ export default {
         li {
             padding: 5px;
             margin: 5px;
-            background-color: #efefef;
+            background-color: #409eff;
+            color: #fff;
         }
     }
 }

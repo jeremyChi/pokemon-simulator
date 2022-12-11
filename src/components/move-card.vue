@@ -70,8 +70,9 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #efefef;
+    background-color: #fff;
     padding: 10px;
+    border: 1px solid #c2c2c2;
 
     .move-name {
         color: #000;

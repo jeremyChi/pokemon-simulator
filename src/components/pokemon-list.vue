@@ -7,7 +7,7 @@
                 </el-form-item>
                 <el-form-item label="世代">
                     <el-select style="width: 8em;" clearable v-model="searchForm.gen" placeholder="请选择">
-                        <el-option v-for="gen in 7" :key="gen" :label="gen" :value="gen" />
+                        <el-option v-for="gen in genEndPoint.length" :key="gen" :label="gen" :value="gen" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="第一属性">
@@ -28,7 +28,7 @@
                 已经选择了:
                 <ul>
                     <li v-for="(el,i) in selection">{{el.name.chinese}} <el-icon @click="selection.splice(i,1)" class="btn-remove btn-remove-selection">
-                            <Remove />
+                            <CloseBold />
                         </el-icon>
                     </li>
                 </ul>
@@ -111,7 +111,7 @@ export default {
             total: 0,
             selection: [],
             types,
-            genEndPoint: [151, 251, 386, 493, 649, 721, 809],
+            genEndPoint: [151, 251, 386, 493, 649, 721, 809, 890],
         }
     },
 
@@ -133,10 +133,12 @@ export default {
                 if (index < 0) {
                     if (multiple) {
                         this.selection.push(pokemon)
-                    } else {
+                    }
+                    else {
                         this.selection = [pokemon]
                     }
-                } else {
+                }
+                else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -144,7 +146,8 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择精灵')
-            } else {
+            }
+            else {
                 this.$emit('pick', this.selection)
             }
         },
@@ -171,7 +174,7 @@ export default {
                 page: 1,
             }
         },
-        clearSelection(){
+        clearSelection() {
             this.selection = []
         },
     },
@@ -240,7 +243,8 @@ export default {
         li {
             padding: 5px;
             margin: 5px;
-            background-color: #efefef;
+            background-color: #409eff;
+            color: #fff;
         }
     }
 }

@@ -50,7 +50,6 @@
                                                         <Remove />
                                                     </el-icon>
                                                     <move-card :move="element"></move-card>
-                                                    <el-divider v-if="index < pokemon.moves.length-1" />
                                                 </li>
                                             </template>
                                         </draggable>
@@ -87,7 +86,7 @@
             </el-drawer>
         </div>
         <wiki ref="wiki" :keyword="wikiKeyword"></wiki>
-        
+
     </div>
 </template>
 <script>
@@ -130,17 +129,17 @@ export default {
             phaseCheckingDrawer: false,
             activePokemonIndex: '',
             wikiKeyword: '',
-            mode : 'view',
+            mode: 'view',
         }
     },
 
     methods: {
         choosePokemon() {
-            this.mode='select';
+            this.mode = 'select';
             this.pokemonDrawer = true;
         },
         chooseMove(i) {
-            this.mode='select';
+            this.mode = 'select';
             this.activePokemonIndex = i;
             this.moveDrawer = true;
         },
@@ -233,7 +232,6 @@ export default {
 <style scoped lang="scss">
 .container {
     padding: 30px;
-    width: 1290px;
     margin: 0 auto;
 }
 
@@ -255,7 +253,7 @@ export default {
 }
 
 .members {
-    display: inline-grid;
+    display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 15px;
 }
@@ -278,7 +276,6 @@ export default {
 .position {
     background-color: rgba(255, 255, 255, .75);
     padding: 10px;
-    width: 400px;
     position: relative;
 
     .pokemon-card {
@@ -307,9 +304,16 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
+            grid-column-end: 2;
         }
 
         .moves {
+            div {
+                display: grid;
+                grid-template-columns: 160px 160px;
+                grid-gap: 5px;
+            }
+
             ul {
                 height: 100%;
                 display: flex;

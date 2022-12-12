@@ -4,7 +4,7 @@
             <el-card class="box-card">
                 <template #header>
                     <div class="card-header">
-                        <p class="title"><span class="emoji">😍</span><span v-if="phases.length == phasesWeCanDefeat.length">👍</span></p>
+                        <p class="title"><span class="emoji">😍</span><span>[{{phasesWeCanDefeat.length}}]</span><span v-if="types.length == phasesWeCanDefeat.length">👍</span></p>
                     </div>
                 </template>
                 <ul class="data-list">
@@ -21,7 +21,7 @@
             <el-card class="box-card">
                 <template #header>
                     <div class="card-header">
-                        <p class="title"><span class="emoji">😱</span><span v-if="!phasesWeFeared.length">👍</span></p>
+                        <p class="title"><span class="emoji">😱</span><span>[{{phasesWeFeared.length}}]</span><span v-if="!phasesWeFeared.length">👍</span></p>
                     </div>
                 </template>
                 <ul class="data-list">

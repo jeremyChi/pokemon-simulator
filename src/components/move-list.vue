@@ -66,6 +66,14 @@
 import moves from '../dataset/moves.json'
 import types from '../dataset/types.json'
 import moveCard from './move-card.vue'
+import {
+    debounce
+}
+from 'lodash'
+import {
+    match
+}
+from 'pinyin-pro';
 export default {
     name: 'move-list',
     props: {
@@ -79,9 +87,35 @@ export default {
     components: {
         moveCard,
     },
-    computed: {
-        moves: function() {
+    watch: {
+        'searchForm': {
+            handler() {
+                this.getMoves()
+            },
+            deep: true,
+        },
+        'page': function() {
+            this.getMoves()
+        },
+        'size': function() {
+            this.getMoves()
+        },
+    },
+    computed: {},
+    data() {
+        return {
+            searchForm: {},
+            size: 20,
+            page: 1,
+            total: 0,
+            selection: [],
+            types,
+            moves: [],
+        }
+    },
 
+    methods: {
+        getMoves: debounce(function() {
             let {
                 keyword,
                 phase,
@@ -98,34 +132,21 @@ export default {
                 size
             } = this;
             let res = moves.filter(move => {
-                let nameMatch = move.cname.indexOf(keyword) > -1
+                let nameMatch = match(move.cname, keyword);
                 let idMatch = move.id == keyword
                 let phaseMatch = !phase || (move.type == phase);
                 let keywordMatch = !keyword || nameMatch || idMatch;
                 let categoryMatch = !category || category == move.category;
                 let ppMatch = !pp || +pp == move.pp
                 let accuracyMatch = (!accuracyStart && !accuracyEnd) || (move.accuracy && (move.accuracy >= accuracyStart && move.accuracy <= accuracyEnd))
-                let powerMatch = (!powerStart && !powerEnd) || ( move.power && (move.power >= powerStart && move.power <= powerEnd))
+                let powerMatch = (!powerStart && !powerEnd) || (move.power && (move.power >= powerStart && move.power <= powerEnd))
                 return keywordMatch && phaseMatch && categoryMatch && ppMatch && accuracyMatch && powerMatch
             })
 
             this.total = res.length;
 
-            return res.splice((page - 1) * size, size)
-        },
-    },
-    data() {
-        return {
-            searchForm: {},
-            size: 20,
-            page: 1,
-            total: 0,
-            selection: [],
-            types,
-        }
-    },
-
-    methods: {
+            this.moves = res.splice((page - 1) * size, size)
+        }, 200),
         onPageChange(v) {
             this.page = v;
         },
@@ -143,10 +164,12 @@ export default {
                 if (index < 0) {
                     if (multiple) {
                         this.selection.push(move)
-                    } else {
+                    }
+                    else {
                         this.selection = [move]
                     }
-                } else {
+                }
+                else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -154,7 +177,8 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择技能')
-            } else {
+            }
+            else {
                 this.$emit('pick', this.selection)
             }
         },
@@ -168,7 +192,7 @@ export default {
                 page: 1,
             }
         },
-        clearSelection(){
+        clearSelection() {
             this.selection = []
         },
     },

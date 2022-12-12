@@ -53,6 +53,11 @@
 import pokedex from '../dataset/pokedex.json'
 import types from '../dataset/types.json'
 import pokemonCard from './pokemon-card.vue'
+import {
+    debounce
+}
+from 'lodash'
+import { match } from 'pinyin-pro';
 export default {
     name: 'pokemon-list',
     props: {
@@ -66,8 +71,38 @@ export default {
     components: {
         pokemonCard,
     },
+    watch: {
+        'searchForm': {
+            handler() {
+                this.getPokemons()
+            },
+            deep: true,
+        },
+        'page': function() {
+            this.getPokemons()
+        },
+        'size': function() {
+            this.getPokemons()
+        },
+    },
     computed: {
-        pokemons: function() {
+
+    },
+    data() {
+        return {
+            searchForm: {},
+            size: 20,
+            page: 1,
+            total: 0,
+            selection: [],
+            types,
+            genEndPoint: [151, 251, 386, 493, 649, 721, 809, 890],
+            pokemons: [],
+        }
+    },
+
+    methods: {
+        getPokemons: debounce(function() {
             let {
                 keyword,
                 firstPhase,
@@ -79,7 +114,6 @@ export default {
                 size
             } = this;
             let genRange = this.getGenRange(gen)
-
             let res = pokedex.filter(pokemon => {
                 let {
                     name,
@@ -87,7 +121,7 @@ export default {
                     type,
                 } = pokemon;
 
-                let nameMatch = name.chinese.indexOf(keyword) > -1
+                let nameMatch = match(name.chinese,keyword);
                 let idMatch = id == keyword
                 let firstPhaseMatch = !firstPhase || (type[0] == firstPhase);
                 let secondPhaseMatch = !secondPhase || (type[1] == secondPhase);
@@ -100,22 +134,8 @@ export default {
 
             this.total = res.length;
 
-            return res.splice((page - 1) * size, size)
-        },
-    },
-    data() {
-        return {
-            searchForm: {},
-            size: 20,
-            page: 1,
-            total: 0,
-            selection: [],
-            types,
-            genEndPoint: [151, 251, 386, 493, 649, 721, 809, 890],
-        }
-    },
-
-    methods: {
+            this.pokemons = res.splice((page - 1) * size, size)
+        }, 200),
         onPageChange(v) {
             this.page = v;
         },

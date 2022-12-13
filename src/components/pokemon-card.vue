@@ -2,7 +2,7 @@
     <div>
         <div class="container">
             <section class="basic">
-                <img class="avatar" :src="`/src/dataset/images/${`${pokemon.id}`.padStart(3,0)}.png`">
+                <img class="avatar" :src="`/images/${`${pokemon.id}`.padStart(3,0)}.png`">
                 <!-- <img class="avatar" :src="`https://img.pokemondb.net/sprites/home/normal/2x/${pokemon.name.english.toLowerCase()}.jpg`"> -->
                 <el-popover :show-after="400" :hide-after="40" placement="top-end" title="宝可梦详情" :width="380" trigger="hover">
                     <template #reference>

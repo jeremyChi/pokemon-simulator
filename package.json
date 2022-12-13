@@ -9,6 +9,7 @@
   "dependencies": {
     "element-plus": "^2.2.22",
     "lodash": "^4.17.21",
+    "pinyin-pro": "^3.13.0",
     "postcss": "^8.4.19",
     "sass": "^1.56.1",
     "vue": "^3.2.41",

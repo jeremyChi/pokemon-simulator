@@ -105,7 +105,7 @@ export default {
     data() {
         return {
             searchForm: {},
-            size: 20,
+            size: 50,
             page: 1,
             total: 0,
             selection: [],

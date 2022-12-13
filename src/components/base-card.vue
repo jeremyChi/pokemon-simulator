@@ -66,7 +66,7 @@ export default {
 
             .bar {
                 flex-grow: 1;
-                width: 10px;
+                width: 30px;
                 background-color: #ddd;
                 margin-bottom: 5px;
                 position: relative;

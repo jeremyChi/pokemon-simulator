@@ -95,7 +95,7 @@ export default {
     }
 
     .details {
-        margin-top: 25px;
+        margin-top: 15px;
         display: grid;
         grid-template-columns: auto auto;
         grid-gap: 10px 5px;

@@ -5,11 +5,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'index',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/index.vue')
+      redirect : '/team',
+    },
+    {
+      path: '/team',
+      name: 'team',
+      component: () => import('@/components/team.vue')
     },
     {
       path: '/pokemon-list',

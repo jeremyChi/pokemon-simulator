@@ -3,13 +3,6 @@
         <div class="container">
             <header class="tools">
                 <el-button-group>
-                    <el-button type="primary" @click="$router.push('/pokemon-list')">宝可梦列表</el-button>
-                    <!-- <el-button type="primary" @click="mode='view'; pokemonDrawer=true">宝可梦列表</el-button> -->
-                    <!-- <el-button type="primary" @click="mode='view'; moveDrawer=true">技能列表</el-button> -->
-                    <el-button type="primary" @click="$router.push('/move-list')">技能列表</el-button>
-                </el-button-group>
-
-                <el-button-group>
                     <el-button type="primary" @click="exportPokemons()">导出队伍</el-button>
                     <el-button type="primary" class="btn-import" @click="importPokemons()">导入队伍 </el-button>
                 </el-button-group>
@@ -29,7 +22,7 @@
                 </el-button-group>
 
                 <el-link target="blank" href="https://www.wyaq.com/youxi/jinshouzhi/11994.html">金手指</el-link>
-                <el-input style="width:12em; margin-left: auto;" clearable v-model="wikiKeyword" placeholder="键入并按回车搜索wiki" @keyup="onKeyUp" />
+                
             </header>
 
             <ul class="team" :grabbing="drag" v-show="pokemons.length">
@@ -233,7 +226,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .container {
-    padding: 30px;
+    padding: 15px;
     margin: 0 auto;
 }
 

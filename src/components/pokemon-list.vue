@@ -57,7 +57,10 @@ import {
     debounce
 }
 from 'lodash'
-import { match } from 'pinyin-pro';
+import {
+    match
+}
+from 'pinyin-pro';
 export default {
     name: 'pokemon-list',
     props: {
@@ -153,10 +156,12 @@ export default {
                 if (index < 0) {
                     if (multiple) {
                         this.selection.push(pokemon)
-                    } else {
+                    }
+                    else {
                         this.selection = [pokemon]
                     }
-                } else {
+                }
+                else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -164,7 +169,8 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择精灵')
-            } else {
+            }
+            else {
                 this.$emit('pick', this.selection)
             }
         },
@@ -207,6 +213,7 @@ export default {
     flex-direction: column;
     height: 100%;
     padding: 15px;
+    background-color: #fff;
 }
 
 .pokemons {

@@ -132,7 +132,7 @@ export default {
                 size
             } = this;
             let res = moves.filter(move => {
-                let nameMatch = match(move.cname, keyword);
+                let nameMatch = match(move.cname, keyword || '');
                 let idMatch = move.id == keyword
                 let phaseMatch = !phase || (move.type == phase);
                 let keywordMatch = !keyword || nameMatch || idMatch;
@@ -164,12 +164,10 @@ export default {
                 if (index < 0) {
                     if (multiple) {
                         this.selection.push(move)
-                    }
-                    else {
+                    } else {
                         this.selection = [move]
                     }
-                }
-                else {
+                } else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -177,8 +175,7 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择技能')
-            }
-            else {
+            } else {
                 this.$emit('pick', this.selection)
             }
         },
@@ -197,7 +194,9 @@ export default {
         },
     },
 
-    mounted() {},
+    mounted() {
+        this.getMoves()
+    },
 }
 </script>
 <style scoped lang="scss">
@@ -205,6 +204,8 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 15px;
+    background-color: #fff;
 }
 
 .moves {

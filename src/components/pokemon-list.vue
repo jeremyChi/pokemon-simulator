@@ -121,7 +121,7 @@ export default {
                     type,
                 } = pokemon;
 
-                let nameMatch = match(name.chinese,keyword);
+                let nameMatch = match(name.chinese, keyword || '');
                 let idMatch = id == keyword
                 let firstPhaseMatch = !firstPhase || (type[0] == firstPhase);
                 let secondPhaseMatch = !secondPhase || (type[1] == secondPhase);
@@ -153,12 +153,10 @@ export default {
                 if (index < 0) {
                     if (multiple) {
                         this.selection.push(pokemon)
-                    }
-                    else {
+                    } else {
                         this.selection = [pokemon]
                     }
-                }
-                else {
+                } else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -166,8 +164,7 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择精灵')
-            }
-            else {
+            } else {
                 this.$emit('pick', this.selection)
             }
         },
@@ -199,7 +196,9 @@ export default {
         },
     },
 
-    mounted() {},
+    mounted() {
+        this.getPokemons()
+    },
 }
 </script>
 <style scoped lang="scss">
@@ -207,13 +206,13 @@ export default {
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 15px;
 }
 
 .pokemons {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: repeat(auto-fill, 160px);
-    padding: 10px;
     overflow-y: auto;
 }
 
@@ -224,6 +223,7 @@ export default {
 .action-bar {
     margin-top: 20px;
     text-align: right;
+
 }
 
 [mode="select"] {

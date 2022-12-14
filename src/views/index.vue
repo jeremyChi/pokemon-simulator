@@ -3,8 +3,10 @@
         <div class="container">
             <header class="tools">
                 <el-button-group>
-                    <el-button type="primary" @click="mode='view'; pokemonDrawer=true">宝可梦列表</el-button>
-                    <el-button type="primary" @click="mode='view'; moveDrawer=true">技能列表</el-button>
+                    <el-button type="primary" @click="$router.push('/pokemon-list')">宝可梦列表</el-button>
+                    <!-- <el-button type="primary" @click="mode='view'; pokemonDrawer=true">宝可梦列表</el-button> -->
+                    <!-- <el-button type="primary" @click="mode='view'; moveDrawer=true">技能列表</el-button> -->
+                    <el-button type="primary" @click="$router.push('/move-list')">技能列表</el-button>
                 </el-button-group>
 
                 <el-button-group>

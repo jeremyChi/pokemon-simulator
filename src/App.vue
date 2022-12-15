@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <el-menu :default-active="activeIndex" class="menu" mode="horizontal" @select="handleSelect">
-            <el-menu-item index="/team">队伍配置</el-menu-item>
+            <el-menu-item index="/team">队伍</el-menu-item>
             <el-menu-item index="/pokemon-list">宝可梦</el-menu-item>
             <el-menu-item index="/move-list">技能</el-menu-item>
             <el-input style="width:12em; margin-left: auto;align-self: center; margin-right: 20px;" clearable v-model="wikiKeyword" placeholder="键入并按回车搜索百科" @keyup="onKeyUp" />

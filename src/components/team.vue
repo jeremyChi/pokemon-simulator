@@ -280,7 +280,7 @@ export default {
 
     .pokemon-card {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: auto 385px;
         grid-template-rows: auto 140px;
         grid-gap: 5px;
         height: 100%;
@@ -310,7 +310,7 @@ export default {
         .moves {
             div {
                 display: grid;
-                grid-template-columns: 160px 160px;
+                grid-template-columns: 180px 180px;
                 grid-gap: 5px;
             }
 

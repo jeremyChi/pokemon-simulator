@@ -7,7 +7,7 @@
                 </el-form-item>
                 <el-form-item label="属性">
                     <el-select style="width: 8em;" clearable v-model="searchForm.phase" placeholder="请选择">
-                        <el-option v-for="type in types" :key="type.english" :label="type.chinese" :value="type.english" />
+                        <el-option v-for="type in types" :key="type.chinese" :label="type.chinese" :value="type.chinese" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="种类">
@@ -15,6 +15,8 @@
                         <el-option label="物理" value="物理" />
                         <el-option label="变化" value="变化" />
                         <el-option label="特殊" value="特殊" />
+                        <el-option label="极巨" value="极巨" />
+                        <el-option label="超级巨" value="超级巨" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="PP">
@@ -39,7 +41,7 @@
             <div class="selection" v-show="mode == 'select'" style="line-height: 1.4;padding: 10px;">
                 已经选择了:
                 <ul>
-                    <li v-for="(el,i) in selection">{{el.cname}}
+                    <li v-for="(el,i) in selection">{{el[1]}}
                         <el-icon @click="selection.splice(i,1)" class="btn-remove btn-remove-selection">
                             <CloseBold />
                         </el-icon>
@@ -47,7 +49,7 @@
                 </ul>
             </div>
             <ul class="moves" :mode="mode">
-                <li class="move" :checked="selection.map(el=>el.id).includes(move.id)" v-for="(move,i) in moves" :key="move.id" @click="onMoveClick(move)">
+                <li class="move" :checked="selection.map(el=>el.id).includes(move[0])" v-for="(move,i) in moves" :key="i" @click="onMoveClick(move)">
                     <el-icon class="check-layer">
                         <CircleCheck />
                     </el-icon>
@@ -63,7 +65,7 @@
     </div>
 </template>
 <script>
-import moves from '../dataset/moves.json'
+import { moves } from '../dataset/moves.js'
 import types from '../dataset/types.json'
 import moveCard from './move-card.vue'
 import {
@@ -132,14 +134,15 @@ export default {
                 size
             } = this;
             let res = moves.filter(move => {
-                let nameMatch = match(move.cname, keyword || '');
-                let idMatch = move.id == keyword
-                let phaseMatch = !phase || (move.type == phase);
+
+                let nameMatch = match(move[1], keyword || '');
+                let idMatch = move[0] == keyword
+                let phaseMatch = !phase || (move[4] == phase);
                 let keywordMatch = !keyword || nameMatch || idMatch;
-                let categoryMatch = !category || category == move.category;
-                let ppMatch = !pp || +pp == move.pp
-                let accuracyMatch = (!accuracyStart && !accuracyEnd) || (move.accuracy && (move.accuracy >= accuracyStart && move.accuracy <= accuracyEnd))
-                let powerMatch = (!powerStart && !powerEnd) || (move.power && (move.power >= powerStart && move.power <= powerEnd))
+                let categoryMatch = !category || category == move[5];
+                let ppMatch = !pp || +pp == move[8]
+                let accuracyMatch = (!accuracyStart && !accuracyEnd) || (move[7] && (move[7] >= accuracyStart && move[7] <= accuracyEnd))
+                let powerMatch = (!powerStart && !powerEnd) || (move[6] && (move[6] >= powerStart && move[6] <= powerEnd))
                 return keywordMatch && phaseMatch && categoryMatch && ppMatch && accuracyMatch && powerMatch
             })
 
@@ -159,7 +162,7 @@ export default {
                 mode,
                 multiple,
             } = this;
-            let index = this.selection.findIndex(el => el.id == move.id)
+            let index = this.selection.findIndex(el => el.id == move[0])
             if (mode == 'select') {
                 if (index < 0) {
                     if (multiple) {
@@ -211,7 +214,7 @@ export default {
 .moves {
     display: grid;
     grid-gap: 10px;
-    grid-template-columns: repeat(auto-fill, 160px);
+    grid-template-columns: repeat(auto-fill, 180px);
     padding: 10px;
     overflow-y: auto;
 }

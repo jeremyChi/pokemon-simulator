@@ -4,14 +4,11 @@
             <header class="tools">
                 <el-button-group>
                     <el-button type="primary" @click="exportPokemons()">导出队伍</el-button>
-                    <el-button type="primary" class="btn-import" @click="importPokemons()">导入队伍 </el-button>
+                    <!-- <el-button type="primary" class="btn-import" @click="importPokemons()">导入队伍 </el-button> -->
                 </el-button-group>
-                <input class="hidden" @change="onFileChange" ref="file" id="file" type="file" />
-
                 <el-button-group>
                     <el-button type="primary" @click="phaseCheckingDrawer = true">属性检测</el-button>
                 </el-button-group>
-
                 <el-button-group>
                     <el-button type="primary" @click="savePokemons()">保存至缓存</el-button>
                     <el-popconfirm confirm-button-text="清空" cancel-button-text="再想想" title="确认清空?" @confirm="clearPokemons()">
@@ -20,11 +17,15 @@
                         </template>
                     </el-popconfirm>
                 </el-button-group>
-
                 <el-link target="blank" href="https://www.wyaq.com/youxi/jinshouzhi/11994.html">金手指</el-link>
-                
+                <div class="import-team">
+                    <el-upload drag @change="onFileChange" :auto-upload="false" :show-file-list="false">
+                        <div class="el-upload__text">
+                            将 <em>队伍配置文件</em> 拖拽至此或 <em>点击上传</em>
+                        </div>
+                    </el-upload>
+                </div>
             </header>
-
             <ul class="team" :grabbing="drag" v-show="pokemons.length">
                 <draggable class="members" v-model="pokemons" @start="drag=true" @end="drag=false" item-key="id">
                     <template #item="{element:pokemon,index:i}">
@@ -61,27 +62,22 @@
                     </template>
                 </draggable>
             </ul>
-
             <div class="btn-add-member" v-show="pokemons.length<6">
                 <el-icon class="btn-add" @click="choosePokemon()">
                     <Plus />
                 </el-icon>
             </div>
-
             <el-drawer direction="ttb" size="690px" @opened="$refs['pokemon-list'].reset(); $refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
                 <pokemon-list ref="pokemon-list" @pick="onPokemonPick" :mode="mode" multiple="true"></pokemon-list>
             </el-drawer>
-
             <el-drawer direction="ttb" size="590px" @opened="$refs['move-list'].reset(); $refs['move-list'].clearSelection()" v-model="moveDrawer" title="请选择技能">
                 <move-list ref="move-list" @pick="onMovePick" :mode="mode" multiple="true"></move-list>
             </el-drawer>
-
             <el-drawer direction="ttb" size="500px" v-model="phaseCheckingDrawer" title="队伍属性检测">
                 <phase-checking ref="phase-checking" :phases="teamPhases"></phase-checking>
             </el-drawer>
         </div>
         <wiki ref="wiki" :keyword="wikiKeyword"></wiki>
-
     </div>
 </template>
 <script>
@@ -155,8 +151,7 @@ export default {
             this.moveDrawer = false;
             if (!pokemon.moves) {
                 pokemon.moves = [...moves]
-            }
-            else {
+            } else {
                 pokemon.moves = [...pokemon.moves, ...moves]
             }
         },
@@ -192,12 +187,9 @@ export default {
 
             })
         },
-        importPokemons() {
-            this.$refs['file'].click()
-        },
         onFileChange(event) {
             let self = this;
-            let file = event.target.files[0];
+            let file = event.raw;
             if (!file) {
                 return;
             }
@@ -237,6 +229,7 @@ export default {
     grid-column-end: 4;
     display: flex;
     padding: 20px;
+    align-items: center;
 
     &>*+* {
         margin-left: 20px;
@@ -266,6 +259,18 @@ export default {
         width: 100%;
         height: 100%;
     }
+}
+
+.import-team {
+    position: relative;
+    margin-left: auto;
+
+    ::v-deep .el-upload-dragger {
+        background-color: rgba(255, 255, 255, .75) !important;
+        padding: 15px;
+        border-width: 2px;
+    }
+
 }
 
 .position {

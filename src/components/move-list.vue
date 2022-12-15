@@ -49,7 +49,7 @@
                 </ul>
             </div>
             <ul class="moves" :mode="mode">
-                <li class="move" :checked="selection.map(el=>el.id).includes(move[0])" v-for="(move,i) in moves" :key="i" @click="onMoveClick(move)">
+                <li class="move" :checked="selection.map(el=>el[0]).includes(move[0])" v-for="(move,i) in moves" :key="i" @click="onMoveClick(move)">
                     <el-icon class="check-layer">
                         <CircleCheck />
                     </el-icon>

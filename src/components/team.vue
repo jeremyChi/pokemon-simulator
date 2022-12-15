@@ -78,13 +78,13 @@
                 </el-icon>
             </div>
             <el-drawer direction="ttb" size="690px" @opened="$refs['pokemon-list'].reset(); $refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
-                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" :mode="mode" multiple="true"></pokemon-list>
+                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" :mode="mode" :multiple="true"></pokemon-list>
             </el-drawer>
             <el-drawer direction="ttb" size="690px" @opened="$refs['item-list'].reset(); $refs['item-list'].clearSelection()" v-model="itemDrawer" title="请选择道具">
-                <item-list ref="item-list" @pick="onItemPick" :mode="mode" multiple="false"></item-list>
+                <item-list ref="item-list" @pick="onItemPick" :mode="mode" :multiple="false"></item-list>
             </el-drawer>
             <el-drawer direction="ttb" size="590px" @opened="$refs['move-list'].reset(); $refs['move-list'].clearSelection()" v-model="moveDrawer" title="请选择技能">
-                <move-list ref="move-list" @pick="onMovePick" :mode="mode" multiple="true"></move-list>
+                <move-list ref="move-list" @pick="onMovePick" :mode="mode" :multiple="true"></move-list>
             </el-drawer>
             <el-drawer direction="ttb" size="500px" v-model="phaseCheckingDrawer" title="队伍属性检测">
                 <phase-checking ref="phase-checking" :phases="teamPhases"></phase-checking>

@@ -4,7 +4,6 @@
             <header class="tools">
                 <el-button-group>
                     <el-button type="primary" @click="exportPokemons()">导出队伍</el-button>
-                    <!-- <el-button type="primary" class="btn-import" @click="importPokemons()">导入队伍 </el-button> -->
                 </el-button-group>
                 <el-button-group>
                     <el-button type="primary" @click="phaseCheckingDrawer = true">属性检测</el-button>
@@ -36,6 +35,17 @@
                                 </el-icon>
                                 <section class="basic">
                                     <pokemon-card :pokemon="pokemon"></pokemon-card>
+                                    <ul class="items" v-if="pokemon.items && pokemon.items.length">
+                                        <li class="item" v-for="(item,index) in pokemon.items">
+                                            <el-icon @click="pokemon.items.splice(index,1)" class="btn-remove btn-remove-item">
+                                                <Remove />
+                                            </el-icon>
+                                            <item-card :item="item"></item-card>
+                                        </li>
+                                    </ul>
+                                    <div class="btn-add-item" v-else>
+                                        <el-button @click="chooseItem(i)" size="small" type="primary">添加道具</el-button>
+                                    </div>
                                 </section>
                                 <section class="moves">
                                     <ul>
@@ -70,6 +80,9 @@
             <el-drawer direction="ttb" size="690px" @opened="$refs['pokemon-list'].reset(); $refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
                 <pokemon-list ref="pokemon-list" @pick="onPokemonPick" :mode="mode" multiple="true"></pokemon-list>
             </el-drawer>
+            <el-drawer direction="ttb" size="690px" @opened="$refs['item-list'].reset(); $refs['item-list'].clearSelection()" v-model="itemDrawer" title="请选择道具">
+                <item-list ref="item-list" @pick="onItemPick" :mode="mode" multiple="false"></item-list>
+            </el-drawer>
             <el-drawer direction="ttb" size="590px" @opened="$refs['move-list'].reset(); $refs['move-list'].clearSelection()" v-model="moveDrawer" title="请选择技能">
                 <move-list ref="move-list" @pick="onMovePick" :mode="mode" multiple="true"></move-list>
             </el-drawer>
@@ -84,7 +97,9 @@
 import draggable from 'vuedraggable'
 import pokemonList from '../components/pokemon-list.vue'
 import pokemonCard from '../components/pokemon-card.vue'
+import itemCard from '../components/item-card.vue'
 import moveList from '../components/move-list.vue'
+import itemList from '../components/item-list.vue'
 import moveCard from '../components/move-card.vue'
 import baseCard from '../components/base-card.vue'
 import wiki from '../components/wiki.vue'
@@ -94,7 +109,9 @@ export default {
         draggable,
         pokemonList,
         pokemonCard,
+        itemCard,
         moveList,
+        itemList,
         moveCard,
         baseCard,
         wiki,
@@ -117,6 +134,7 @@ export default {
             pokemons: [],
             pokemonDrawer: false,
             moveDrawer: false,
+            itemDrawer: false,
             phaseCheckingDrawer: false,
             activePokemonIndex: '',
             wikiKeyword: '',
@@ -133,6 +151,11 @@ export default {
             this.mode = 'select';
             this.activePokemonIndex = i;
             this.moveDrawer = true;
+        },
+        chooseItem(i) {
+            this.mode = 'select';
+            this.activePokemonIndex = i;
+            this.itemDrawer = true;
         },
         onPokemonPick(pokemons) {
             if (this.pokemons.length + pokemons.length > 6) {
@@ -151,8 +174,23 @@ export default {
             this.moveDrawer = false;
             if (!pokemon.moves) {
                 pokemon.moves = [...moves]
-            } else {
+            }
+            else {
                 pokemon.moves = [...pokemon.moves, ...moves]
+            }
+        },
+        onItemPick(items) {
+            let pokemon = this.pokemons[this.activePokemonIndex];
+            if (items.length + (pokemon.items || []).length > 1) {
+                this.$message.warning('只能携带一个道具')
+                return
+            }
+            this.itemDrawer = false;
+            if (!pokemon.items) {
+                pokemon.items = [...items]
+            }
+            else {
+                pokemon.items = [...pokemon.items, ...items]
             }
         },
         savePokemons() {
@@ -305,6 +343,8 @@ export default {
             align-items: center;
             justify-content: center;
             grid-column-end: 2;
+            flex-direction: column;
+            padding: 15px 0;
         }
 
         .moves {
@@ -319,6 +359,7 @@ export default {
                 display: flex;
                 flex-direction: column;
                 padding: 10px;
+                justify-content: center;
 
                 li {
                     text-align: center;
@@ -326,22 +367,33 @@ export default {
                 }
 
                 .btn-remove-move {
-                    right: 5px;
+                    left: 5px;
                     top: 5px;
                     font-size: 16px;
                 }
-            }
-
-            .el-divider {
-                margin: 10px 0;
             }
         }
     }
 }
 
+.btn-remove-item {
+    left: 5px;
+    top: 5px;
+    font-size: 16px;
+}
+
 .btn-add-move {
     margin-top: 10px;
 }
+
+.btn-add-item {
+    margin-top: 10px;
+}
+
+.items {
+    margin: 10px 15px 0 15px;
+}
+
 
 [grabbing="true"] {
     cursor: grabbing;

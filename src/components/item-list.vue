@@ -5,35 +5,6 @@
                 <el-form-item label="关键字">
                     <el-input style="width: 8em;" clearable v-model="searchForm.keyword" placeholder="名字/编号" />
                 </el-form-item>
-                <el-form-item label="属性">
-                    <el-select style="width: 8em;" clearable v-model="searchForm.phase" placeholder="请选择">
-                        <el-option v-for="type in types" :key="type.chinese" :label="type.chinese" :value="type.chinese" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="种类">
-                    <el-select style="width: 8em;" clearable v-model="searchForm.category" placeholder="请选择">
-                        <el-option label="物理" value="物理" />
-                        <el-option label="变化" value="变化" />
-                        <el-option label="特殊" value="特殊" />
-                        <el-option label="极巨" value="极巨" />
-                        <el-option label="超级巨" value="超级巨" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="PP">
-                    <el-select style="width: 8em;" clearable v-model="searchForm.pp" placeholder="请选择">
-                        <el-option v-for="i in 8" :label="i*5" :value="i*5" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="命中">
-                    <el-input-number style="width: 8em;" :min="0" :max="100" v-model="searchForm.accuracyStart" :step="5" />
-                    <span style="margin: 0 10px;">至</span>
-                    <el-input-number style="width: 8em;" :min="0" :max="100" v-model="searchForm.accuracyEnd" :step="5" />
-                </el-form-item>
-                <el-form-item label="威力">
-                    <el-input-number style="width: 8em;" :min="0" v-model="searchForm.powerStart" />
-                    <span style="margin: 0 10px;">至</span>
-                    <el-input-number style="width: 8em;" :min="0" v-model="searchForm.powerEnd" />
-                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="reset()">重置</el-button>
                 </el-form-item>
@@ -41,19 +12,19 @@
             <div class="selection" v-show="mode == 'select'" style="line-height: 1.4;padding: 10px;">
                 已经选择了:
                 <ul>
-                    <li v-for="(el,i) in selection">{{el[1]}}
+                    <li v-for="(el,i) in selection">{{el[0]}}
                         <el-icon @click="selection.splice(i,1)" class="btn-remove btn-remove-selection">
                             <CloseBold />
                         </el-icon>
                     </li>
                 </ul>
             </div>
-            <ul class="moves" :mode="mode">
-                <li class="move" :checked="selection.map(el=>el.id).includes(move[0])" v-for="(move,i) in moves" :key="i" @click="onMoveClick(move)">
+            <ul class="items" :mode="mode">
+                <li class="item" :checked="selection.map(el=>el[0]).includes(item[0])" v-for="(item,i) in items" :key="i" @click="onItemClick(item)">
                     <el-icon class="check-layer">
                         <CircleCheck />
                     </el-icon>
-                    <move-card :move="move"></move-card>
+                    <item-card :item="item"></item-card>
                 </li>
             </ul>
             <el-pagination background :page-size="size" :current-page="page" layout="total, sizes, prev, pager, next" :total="total" @current-change="onPageChange" @size-change="onSizeChange" />
@@ -65,19 +36,21 @@
     </div>
 </template>
 <script>
-import { moves } from '../dataset/moves.js'
-import types from '../dataset/types.json'
-import moveCard from './move-card.vue'
+import {
+    items
+}
+from '../dataset/items.js'
 import {
     debounce
 }
 from 'lodash'
+import itemCard from './item-card.vue'
 import {
     match
 }
 from 'pinyin-pro';
 export default {
-    name: 'move-list',
+    name: 'item-list',
     props: {
         mode: {
             default: 'view',
@@ -87,76 +60,54 @@ export default {
         },
     },
     components: {
-        moveCard,
+        itemCard,
     },
     watch: {
         'searchForm': {
             handler() {
-                this.getMoves()
+                this.getItems()
             },
             deep: true,
         },
         'page': function() {
-            this.getMoves()
+            this.getItems()
         },
         'size': function() {
-            this.getMoves()
+            this.getItems()
         },
     },
     computed: {},
     data() {
         return {
             searchForm: {
-                keyword : '',
-                phase : '',
-                category : '',
-                pp : '',
-                accuracyStart : '',
-                accuracyEnd : '',
-                powerStart : '',
-                powerEnd : '',
+                keyword: '',
             },
             size: 50,
             page: 1,
             total: 0,
             selection: [],
-            types,
-            moves: [],
+            items: [],
         }
     },
 
     methods: {
-        getMoves: debounce(function() {
+        getItems: debounce(function() {
             let {
                 keyword,
-                phase,
-                category,
-                pp,
-                accuracyStart,
-                accuracyEnd,
-                powerStart,
-                powerEnd,
 
             } = this.searchForm;
             let {
                 page,
                 size
             } = this;
-            let res = moves.filter(move => {
-                let nameMatch = match(move[1], keyword || '');
-                let idMatch = move[0] == keyword
-                let phaseMatch = !phase || (move[4] == phase);
-                let keywordMatch = !keyword || nameMatch || idMatch;
-                let categoryMatch = !category || category == move[5];
-                let ppMatch = !pp || +pp == move[8]
-                let accuracyMatch = (!accuracyStart && !accuracyEnd) || (move[7] && (move[7] >= accuracyStart && move[7] <= accuracyEnd))
-                let powerMatch = (!powerStart && !powerEnd) || (move[6] && (move[6] >= powerStart && move[6] <= powerEnd))
-                return keywordMatch && phaseMatch && categoryMatch && ppMatch && accuracyMatch && powerMatch
+            let res = items.filter(item => {
+                let nameMatch = match(item[0], keyword || '');
+                let keywordMatch = !keyword || nameMatch;
+                return keywordMatch;
             })
 
             this.total = res.length;
-
-            this.moves = res.splice((page - 1) * size, size)
+            this.items = res.splice((page - 1) * size, size)
         }, 200),
         onPageChange(v) {
             this.page = v;
@@ -165,20 +116,22 @@ export default {
             this.page = 1;
             this.size = v;
         },
-        onMoveClick(move) {
+        onItemClick(item) {
             let {
                 mode,
                 multiple,
             } = this;
-            let index = this.selection.findIndex(el => el.id == move[0])
+            let index = this.selection.findIndex(el => el.id == item[0])
             if (mode == 'select') {
                 if (index < 0) {
                     if (multiple) {
-                        this.selection.push(move)
-                    } else {
-                        this.selection = [move]
+                        this.selection.push(item)
                     }
-                } else {
+                    else {
+                        this.selection = [item]
+                    }
+                }
+                else {
                     this.selection.splice(index, 1)
                 }
             }
@@ -186,18 +139,14 @@ export default {
         onSubmit() {
             if (!this.selection.length) {
                 this.$message.warning('请选择技能')
-            } else {
+            }
+            else {
                 this.$emit('pick', this.selection)
             }
         },
         reset() {
             this.searchForm = {
                 keyword: '',
-                phase: '',
-                category: '',
-                pp: '',
-                size: 20,
-                page: 1,
             }
         },
         clearSelection() {
@@ -206,7 +155,7 @@ export default {
     },
 
     mounted() {
-        this.getMoves()
+        this.getItems()
     },
 }
 </script>
@@ -219,7 +168,7 @@ export default {
     background-color: #fff;
 }
 
-.moves {
+.items {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: repeat(auto-fill, 180px);
@@ -227,7 +176,7 @@ export default {
     overflow-y: auto;
 }
 
-.move {
+.item {
     position: relative;
 }
 
@@ -237,7 +186,7 @@ export default {
 }
 
 [mode="select"] {
-    .move {
+    .item {
         cursor: pointer;
     }
 }

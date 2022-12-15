@@ -21,6 +21,11 @@ const router = createRouter({
       path: '/move-list',
       name: 'move-list',
       component: () => import('@/components/move-list.vue')
+    },
+    {
+      path: '/item-list',
+      name: 'item-list',
+      component: () => import('@/components/item-list.vue')
     }
   ]
 })

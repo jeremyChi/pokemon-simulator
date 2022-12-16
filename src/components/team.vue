@@ -34,6 +34,7 @@
                                     <CircleCloseFilled />
                                 </el-icon>
                                 <section class="basic">
+                                    <el-link class="btn-evolution" @click="onEvolutionClick(i)">进化</el-link>
                                     <pokemon-card :pokemon="pokemon"></pokemon-card>
                                     <ul class="items" v-if="pokemon.items && pokemon.items.length">
                                         <li class="item" v-for="(item,index) in pokemon.items">
@@ -78,7 +79,7 @@
                 </el-icon>
             </div>
             <el-drawer direction="ttb" size="690px" @opened="$refs['pokemon-list'].reset(); $refs['pokemon-list'].clearSelection()" v-model="pokemonDrawer" title="请选择宝可梦">
-                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" :mode="mode" :multiple="true"></pokemon-list>
+                <pokemon-list ref="pokemon-list" @pick="onPokemonPick" :mode="mode" :multiple="multiple" :target="target"></pokemon-list>
             </el-drawer>
             <el-drawer direction="ttb" size="690px" @opened="$refs['item-list'].reset(); $refs['item-list'].clearSelection()" v-model="itemDrawer" title="请选择道具">
                 <item-list ref="item-list" @pick="onItemPick" :mode="mode" :multiple="false"></item-list>
@@ -123,7 +124,7 @@ export default {
                 pokemons
             } = this;
             let moves = pokemons.map(el => el.moves || []).flat();
-            let phases = moves.map(el => el.type)
+            let phases = moves.map(el => el[4])
             phases = [...new Set(phases)]
             return phases;
         },
@@ -139,12 +140,23 @@ export default {
             activePokemonIndex: '',
             wikiKeyword: '',
             mode: 'view',
+            target: 'join',
+            multiple: true,
         }
     },
 
     methods: {
         choosePokemon() {
             this.mode = 'select';
+            this.multiple = true;
+            this.target = 'join';
+            this.pokemonDrawer = true;
+        },
+        onEvolutionClick(i) {
+            this.mode = 'select';
+            this.multiple = false;
+            this.target = 'evolution';
+            this.activePokemonIndex = i;
             this.pokemonDrawer = true;
         },
         chooseMove(i) {
@@ -158,6 +170,16 @@ export default {
             this.itemDrawer = true;
         },
         onPokemonPick(pokemons) {
+
+            if (this.target == 'evolution') {
+                this.pokemons[this.activePokemonIndex] = {
+                    ...this.pokemons[this.activePokemonIndex],
+                    ...pokemons[0],
+                }
+                this.pokemonDrawer = false;
+                return;
+            }
+
             if (this.pokemons.length + pokemons.length > 6) {
                 this.$message.warning('队伍成员不可超过6个')
                 return
@@ -392,6 +414,15 @@ export default {
 
 .items {
     margin: 10px 15px 0 15px;
+}
+
+.btn-evolution {
+    font-size: 12px;
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    z-index: 1;
+    color: #409eff;
 }
 
 

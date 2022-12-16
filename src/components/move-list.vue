@@ -111,10 +111,10 @@ export default {
                 phase : '',
                 category : '',
                 pp : '',
-                accuracyStart : '',
-                accuracyEnd : '',
-                powerStart : '',
-                powerEnd : '',
+                accuracyStart : undefined,
+                accuracyEnd : undefined,
+                powerStart : undefined,
+                powerEnd : undefined,
             },
             size: 50,
             page: 1,
@@ -170,7 +170,7 @@ export default {
                 mode,
                 multiple,
             } = this;
-            let index = this.selection.findIndex(el => el.id == move[0])
+            let index = this.selection.findIndex(el => el[0] == move[0])
             if (mode == 'select') {
                 if (index < 0) {
                     if (multiple) {

@@ -51,7 +51,7 @@ export default {
     },
     computed: {
         phaseInstances: function() {
-            return this.phases.map(ename => this.types.find(type => type.english == ename))
+            return this.phases.map(cname => this.types.find(type => type.chinese == cname))
         },
         phasesWeCanDefeat: function() {
             return [...new Set(this.phaseInstances.map(type => type.beGoodAt).flat())]

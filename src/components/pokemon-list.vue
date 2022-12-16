@@ -70,6 +70,9 @@ export default {
         multiple: {
             default: false,
         },
+        target : {
+            default: 'join',
+        },
     },
     components: {
         pokemonCard,

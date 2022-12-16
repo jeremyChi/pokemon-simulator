@@ -3,19 +3,14 @@
         <div class="container">
             <section class="main">
                 <p class="item-name">
-                    <span class="title link" @click.stop="wiki(item[0])">{{item[0]}} </span>
-                    <small>{{item[4]}}</small>
+                    <el-tooltip class="box-item" effect="dark" placement="top-start">
+                        <template #content>
+                            <div class="item-desc">{{item[3]}}</div>
+                        </template>
+                        <span class="title link" @click.stop="wiki(item[0])">{{item[0]}} </span>
+                    </el-tooltip>
+                    <small>&nbsp;{{item[4]}}</small>
                 </p>
-                <ul class="details">
-                    <li class="detail-item">
-                        <el-tooltip class="box-item" effect="dark" placement="top-start">
-                            <template #content>
-                                <div class="item-desc">{{item[3]}}</div>
-                            </template>
-                            <span class="value">{{item[3]}}</span>
-                        </el-tooltip>
-                    </li>
-                </ul>
             </section>
             <wiki ref="wiki" :keyword="wikiKeyword"></wiki>
         </div>
